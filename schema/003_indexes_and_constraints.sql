@@ -416,14 +416,14 @@ BEGIN
     -- Check F1 score
     IF v_model.f1_score < v_min_f1 THEN
         v_failures := array_append(v_failures,
-            format('F1 score %.4f is below threshold %.4f', v_model.f1_score, v_min_f1)
+            format('F1 score %s is below threshold %s', v_model.f1_score::TEXT, v_min_f1::TEXT)
         );
     END IF;
 
     -- Check FPR
     IF v_model.fpr > v_max_fpr THEN
         v_failures := array_append(v_failures,
-            format('FPR %.4f exceeds threshold %.4f', v_model.fpr, v_max_fpr)
+            format('FPR %s exceeds threshold %s', v_model.fpr::TEXT, v_max_fpr::TEXT)
         );
     END IF;
 
