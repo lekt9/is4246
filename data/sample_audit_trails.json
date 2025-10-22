@@ -1,0 +1,480 @@
+{
+  "description": "Sample audit trails demonstrating complete governance workflows in AFAAP",
+  "scenarios": [
+    {
+      "scenario_id": "1",
+      "title": "Complete Pre-Deployment Approval Workflow",
+      "description": "Model developed, validated, approved, and deployed with full audit trail",
+      "timeline": [
+        {
+          "timestamp": "2024-01-15T09:00:00Z",
+          "actor": "developer_alice",
+          "role": "developer",
+          "action": "model_created",
+          "table": "models",
+          "record_id": "model-uuid-001",
+          "details": {
+            "model_name": "fraud_detector_v3",
+            "training_data": "transactions_2023_q4",
+            "f1_score": 0.87,
+            "fpr": 0.009,
+            "training_records": 150000
+          },
+          "governance_note": "First line of defense: Developer creates model with pre-deployment metrics"
+        },
+        {
+          "timestamp": "2024-01-15T14:30:00Z",
+          "actor": "compliance_officer_bob",
+          "role": "compliance_officer",
+          "action": "model_reviewed",
+          "table": "models",
+          "record_id": "model-uuid-001",
+          "field_changed": "status",
+          "old_value": "pending_approval",
+          "new_value": "approved",
+          "details": {
+            "review_notes": "Model meets F1 >= 0.85 and FPR <= 0.01 thresholds. Training data provenance verified. Approved for deployment.",
+            "safety_case_reviewed": true
+          },
+          "governance_note": "Second line of defense: Compliance officer validates thresholds and approves"
+        },
+        {
+          "timestamp": "2024-01-16T10:00:00Z",
+          "actor": "auditor_carol",
+          "role": "auditor",
+          "action": "model_audited",
+          "table": "models",
+          "record_id": "model-uuid-001",
+          "field_changed": "audited_by",
+          "old_value": null,
+          "new_value": "auditor-carol-uuid",
+          "details": {
+            "audit_notes": "Independent review completed. Model documentation complete. Deployment authorized.",
+            "compliance_checklist_complete": true
+          },
+          "governance_note": "Third line of defense: Independent auditor verifies governance compliance"
+        },
+        {
+          "timestamp": "2024-01-17T08:00:00Z",
+          "actor": "developer_alice",
+          "role": "developer",
+          "action": "model_deployed",
+          "table": "models",
+          "record_id": "model-uuid-001",
+          "field_changed": "status",
+          "old_value": "approved",
+          "new_value": "deployed",
+          "details": {
+            "deployment_date": "2024-01-17T08:00:00Z",
+            "production_environment": "fraud_detection_prod"
+          },
+          "governance_note": "Model deployed to production with complete approval chain"
+        }
+      ],
+      "audit_integrity": {
+        "chain_verified": true,
+        "hash_chain": [
+          "a3f5e9d2c1b4a6f8...",
+          "b2e4d7c3a5f9e1b6...",
+          "c1d3e5a7b9f2c4e8...",
+          "d4e2a6c8b1f3e5d7..."
+        ],
+        "no_tampering_detected": true
+      }
+    },
+    {
+      "scenario_id": "2",
+      "title": "Human-in-the-Loop Decision Review with False Positive",
+      "description": "Transaction flagged by model, reviewed by officer, determined to be false positive",
+      "timeline": [
+        {
+          "timestamp": "2024-02-10T11:23:45Z",
+          "actor": "fraud_detector_v3",
+          "role": "system",
+          "action": "transaction_flagged",
+          "table": "decisions",
+          "record_id": "decision-uuid-101",
+          "details": {
+            "transaction_id": "TXN-SG-20240210-4567",
+            "model_id": "model-uuid-001",
+            "prediction_fraud": true,
+            "confidence_score": 0.78,
+            "reason": "High-value wire transfer to new beneficiary in high-risk jurisdiction",
+            "model_features": {
+              "amount": 250000,
+              "currency": "SGD",
+              "destination_country": "XXX",
+              "customer_risk_profile": "medium",
+              "velocity_24h": 1,
+              "new_beneficiary": true
+            }
+          },
+          "governance_note": "Model flags suspicious transaction, creating decision record for review"
+        },
+        {
+          "timestamp": "2024-02-10T14:15:30Z",
+          "actor": "compliance_officer_diane",
+          "role": "compliance_officer",
+          "action": "decision_reviewed",
+          "table": "decisions",
+          "record_id": "decision-uuid-101",
+          "field_changed": "officer_decision",
+          "old_value": null,
+          "new_value": "false_positive",
+          "details": {
+            "officer_notes": "Customer contacted and verified. This is a legitimate corporate real estate purchase in new market expansion. Customer provided documentation: purchase agreement, board approval minutes, and KYC for beneficiary company. Model correctly flagged unusual pattern but transaction is legitimate.",
+            "customer_contact_time": "2024-02-10T13:45:00Z",
+            "documentation_verified": true,
+            "decision_timestamp": "2024-02-10T14:15:30Z"
+          },
+          "governance_note": "Compliance officer reviews evidence, contacts customer, approves transaction as false positive"
+        },
+        {
+          "timestamp": "2024-02-10T14:15:31Z",
+          "actor": "system",
+          "role": "system",
+          "action": "audit_trail_marked_complete",
+          "table": "decisions",
+          "record_id": "decision-uuid-101",
+          "field_changed": "audit_trail_complete",
+          "old_value": false,
+          "new_value": true,
+          "details": {
+            "review_turnaround_hours": 2.86,
+            "all_required_fields_populated": true,
+            "hash_computed": "e7f3a9c2d8b4e1f6..."
+          },
+          "governance_note": "Audit trail automatically marked complete when all review fields populated"
+        }
+      ],
+      "audit_integrity": {
+        "chain_verified": true,
+        "review_turnaround_time_hours": 2.86,
+        "meets_sla": true,
+        "officer_accountability_documented": true
+      }
+    },
+    {
+      "scenario_id": "3",
+      "title": "Model Failure Incident with Root Cause Analysis",
+      "description": "Model performance degrades, incident logged, investigated, remediated, and auditor signs off",
+      "timeline": [
+        {
+          "timestamp": "2024-03-05T08:00:00Z",
+          "actor": "monitoring_system",
+          "role": "system",
+          "action": "performance_degradation_detected",
+          "details": {
+            "model_id": "model-uuid-001",
+            "production_f1_score": 0.79,
+            "training_f1_score": 0.87,
+            "threshold": 0.85,
+            "alert_triggered": true,
+            "affected_period": "2024-03-01 to 2024-03-05"
+          },
+          "governance_note": "Automated monitoring detects F1 score drop below threshold"
+        },
+        {
+          "timestamp": "2024-03-05T09:30:00Z",
+          "actor": "developer_alice",
+          "role": "developer",
+          "action": "incident_created",
+          "table": "failure_incidents",
+          "record_id": "incident-uuid-001",
+          "details": {
+            "failure_type": "performance_degradation",
+            "severity": "high",
+            "description": "F1 score dropped from 0.87 to 0.79 in production over 5 days",
+            "detected_by": "developer-alice-uuid",
+            "affected_transaction_count": 2547,
+            "false_negative_count": 23,
+            "financial_impact": 1200000
+          },
+          "governance_note": "Developer logs incident with initial assessment of impact"
+        },
+        {
+          "timestamp": "2024-03-06T16:00:00Z",
+          "actor": "developer_alice",
+          "role": "developer",
+          "action": "root_cause_identified",
+          "table": "failure_incidents",
+          "record_id": "incident-uuid-001",
+          "field_changed": "root_cause",
+          "old_value": null,
+          "new_value": "New fraud pattern (account takeover via SIM swap) not represented in training data. Fraudsters adapted technique to bypass model.",
+          "details": {
+            "root_cause_category": "model_drift",
+            "contributing_factors": [
+              "training_data_gap",
+              "adversarial_adaptation",
+              "insufficient_retraining_frequency"
+            ],
+            "responsible_party": "developer",
+            "investigation_notes": "Analysis of false negatives reveals new modus operandi: fraudsters using SIM swap attacks to takeover accounts, then making small test transactions before large transfers. Model trained on older takeover patterns."
+          },
+          "governance_note": "Root cause analysis attributes failure to model drift and identifies accountability"
+        },
+        {
+          "timestamp": "2024-03-08T10:00:00Z",
+          "actor": "developer_alice",
+          "role": "developer",
+          "action": "remediation_plan_created",
+          "table": "failure_incidents",
+          "record_id": "incident-uuid-001",
+          "field_changed": "remediation_plan",
+          "old_value": null,
+          "new_value": "1. Collect labeled data for new fraud pattern (SIM swap takeovers). 2. Retrain model with augmented dataset including 500+ SIM swap cases. 3. Validate on held-out test set with new fraud pattern. 4. Deploy hotfix if F1 >= 0.85. 5. Implement monthly retraining schedule going forward.",
+          "details": {
+            "remediation_status": "in_progress",
+            "assigned_to": "developer-alice-uuid",
+            "estimated_completion": "2024-03-20"
+          },
+          "governance_note": "Developer creates remediation plan with specific steps and timeline"
+        },
+        {
+          "timestamp": "2024-03-18T14:00:00Z",
+          "actor": "developer_alice",
+          "role": "developer",
+          "action": "remediation_completed",
+          "table": "failure_incidents",
+          "record_id": "incident-uuid-001",
+          "field_changed": "remediation_status",
+          "old_value": "in_progress",
+          "new_value": "resolved",
+          "details": {
+            "remediation_completed_date": "2024-03-18T14:00:00Z",
+            "new_model_version": "fraud_detector_v3.1",
+            "retraining_results": {
+              "f1_score": 0.88,
+              "fpr": 0.009,
+              "test_set_size": 25000,
+              "sim_swap_recall": 0.91
+            },
+            "deployed_to_production": true
+          },
+          "governance_note": "Developer completes remediation, model retrained and deployed, performance restored"
+        },
+        {
+          "timestamp": "2024-03-20T11:00:00Z",
+          "actor": "auditor_carol",
+          "role": "auditor",
+          "action": "incident_sign_off",
+          "table": "failure_incidents",
+          "record_id": "incident-uuid-001",
+          "field_changed": "auditor_signoff_by",
+          "old_value": null,
+          "new_value": "auditor-carol-uuid",
+          "details": {
+            "auditor_signoff_date": "2024-03-20T11:00:00Z",
+            "auditor_notes": "Reviewed root cause analysis, remediation plan, and validation results. New model demonstrates improved performance on SIM swap fraud pattern. Monthly retraining schedule approved. Incident closed.",
+            "remediation_status": "closed",
+            "lessons_learned_documented": true,
+            "reported_to_regulator": false
+          },
+          "governance_note": "Independent auditor reviews remediation and signs off, incident closed"
+        }
+      ],
+      "audit_integrity": {
+        "chain_verified": true,
+        "incident_lifecycle_days": 15,
+        "accountability_attribution": "developer",
+        "auditor_signoff_required": true,
+        "auditor_signoff_obtained": true
+      }
+    },
+    {
+      "scenario_id": "4",
+      "title": "Model Re-validation for New Fraud Type",
+      "description": "Model repurposed to detect synthetic identity fraud, triggering mandatory re-validation",
+      "timeline": [
+        {
+          "timestamp": "2024-04-01T09:00:00Z",
+          "actor": "developer_bob",
+          "role": "developer",
+          "action": "revalidation_triggered",
+          "table": "revalidation_workflows",
+          "record_id": "revalidation-uuid-001",
+          "details": {
+            "model_id": "model-uuid-001",
+            "trigger_reason": "new_fraud_type",
+            "trigger_details": "Model being extended to detect synthetic identity fraud, which was not in original training scope.",
+            "new_fraud_types": ["synthetic_identity"],
+            "original_fraud_types": ["credit_card_fraud", "wire_fraud"],
+            "triggered_by": "developer-bob-uuid"
+          },
+          "governance_note": "Developer triggers re-validation workflow due to model repurposing (governance requirement)"
+        },
+        {
+          "timestamp": "2024-04-05T15:00:00Z",
+          "actor": "developer_bob",
+          "role": "developer",
+          "action": "revalidation_results_submitted",
+          "table": "revalidation_workflows",
+          "record_id": "revalidation-uuid-001",
+          "field_changed": "revalidation_f1_score",
+          "old_value": null,
+          "new_value": 0.86,
+          "details": {
+            "new_data_provenance": "synthetic_identity_fraud_dataset_2024_q1",
+            "revalidation_f1_score": 0.86,
+            "revalidation_fpr": 0.0095,
+            "revalidation_test_set_size": 30000,
+            "synthetic_identity_recall": 0.82,
+            "meets_thresholds": true,
+            "revalidation_report_url": "https://docs.internal/revalidation/001"
+          },
+          "governance_note": "Developer completes revalidation testing on new fraud type, submits results"
+        },
+        {
+          "timestamp": "2024-04-08T10:30:00Z",
+          "actor": "compliance_officer_diane",
+          "role": "compliance_officer",
+          "action": "revalidation_reviewed",
+          "table": "revalidation_workflows",
+          "record_id": "revalidation-uuid-001",
+          "field_changed": "status",
+          "old_value": "pending",
+          "new_value": "under_review",
+          "details": {
+            "reviewed_by": "officer-diane-uuid",
+            "review_notes": "Revalidation metrics meet F1 >= 0.85 and FPR <= 0.01 thresholds. Test dataset includes 3,000 confirmed synthetic identity cases. Proceeding to auditor for final approval.",
+            "review_date": "2024-04-08T10:30:00Z"
+          },
+          "governance_note": "Compliance officer validates re-validation results meet thresholds"
+        },
+        {
+          "timestamp": "2024-04-10T14:00:00Z",
+          "actor": "auditor_carol",
+          "role": "auditor",
+          "action": "revalidation_approved",
+          "table": "revalidation_workflows",
+          "record_id": "revalidation-uuid-001",
+          "field_changed": "status",
+          "old_value": "under_review",
+          "new_value": "approved",
+          "details": {
+            "approved_by": "auditor-carol-uuid",
+            "approval_date": "2024-04-10T14:00:00Z",
+            "approval_notes": "Reviewed revalidation methodology and results. Model demonstrates adequate performance on new fraud type. Approved for deployment with expanded fraud detection scope.",
+            "updated_fraud_types": ["credit_card_fraud", "wire_fraud", "synthetic_identity"]
+          },
+          "governance_note": "Independent auditor approves re-validation, model authorized for new use case"
+        }
+      ],
+      "audit_integrity": {
+        "chain_verified": true,
+        "revalidation_lifecycle_days": 9,
+        "meets_f1_threshold": true,
+        "meets_fpr_threshold": true,
+        "three_lines_of_defense_complete": true
+      }
+    },
+    {
+      "scenario_id": "5",
+      "title": "Escalated Decision Requiring Auditor Review",
+      "description": "High-risk transaction escalated from compliance officer to auditor for final decision",
+      "timeline": [
+        {
+          "timestamp": "2024-05-12T16:45:00Z",
+          "actor": "fraud_detector_v3",
+          "role": "system",
+          "action": "high_risk_transaction_flagged",
+          "table": "decisions",
+          "record_id": "decision-uuid-999",
+          "details": {
+            "transaction_id": "TXN-SG-20240512-9999",
+            "model_id": "model-uuid-001",
+            "prediction_fraud": true,
+            "confidence_score": 0.92,
+            "transaction_amount": 5000000,
+            "currency": "SGD",
+            "transaction_type": "wire_transfer",
+            "destination_country": "XXX",
+            "customer_risk_profile": "high",
+            "reason": "Very high-value transfer to high-risk jurisdiction from high-risk customer"
+          },
+          "governance_note": "Model flags extremely high-risk transaction with high confidence"
+        },
+        {
+          "timestamp": "2024-05-12T17:30:00Z",
+          "actor": "compliance_officer_bob",
+          "role": "compliance_officer",
+          "action": "decision_escalated",
+          "table": "decisions",
+          "record_id": "decision-uuid-999",
+          "field_changed": "officer_decision",
+          "old_value": null,
+          "new_value": "escalate",
+          "details": {
+            "officer_notes": "Transaction flagged with 92% confidence. Customer is high-risk corporate client. Amount is $5M SGD to jurisdiction XXX. Customer claims this is payment for construction project. Documentation provided but requires senior review due to amount, destination, and customer risk profile. Escalating to auditor.",
+            "decision_timestamp": "2024-05-12T17:30:00Z",
+            "escalated_to": "auditor-carol-uuid",
+            "escalation_reason": "High-value transaction to high-risk jurisdiction requires independent third-line review"
+          },
+          "governance_note": "Compliance officer escalates to third line of defense due to risk level"
+        },
+        {
+          "timestamp": "2024-05-13T10:00:00Z",
+          "actor": "auditor_carol",
+          "role": "auditor",
+          "action": "escalation_reviewed",
+          "table": "decisions",
+          "record_id": "decision-uuid-999",
+          "field_changed": "final_decision",
+          "old_value": "escalated",
+          "new_value": "blocked",
+          "details": {
+            "auditor_review_notes": "Conducted enhanced due diligence. Construction company in destination country cannot be verified. Customer unable to provide credible evidence of legitimate business relationship. Documentation appears fraudulent. Transaction blocked and customer account flagged for investigation. Law enforcement notified.",
+            "enhanced_due_diligence_completed": true,
+            "law_enforcement_notified": true,
+            "final_decision_timestamp": "2024-05-13T10:00:00Z"
+          },
+          "governance_note": "Independent auditor conducts enhanced review and makes final blocking decision"
+        },
+        {
+          "timestamp": "2024-05-13T10:00:01Z",
+          "actor": "system",
+          "role": "system",
+          "action": "audit_trail_complete",
+          "table": "decisions",
+          "record_id": "decision-uuid-999",
+          "field_changed": "audit_trail_complete",
+          "old_value": false,
+          "new_value": true,
+          "details": {
+            "total_review_time_hours": 17.25,
+            "escalation_chain_documented": true,
+            "three_lines_of_defense_engaged": true
+          },
+          "governance_note": "Complete audit trail from model prediction → officer review → auditor decision"
+        }
+      ],
+      "audit_integrity": {
+        "chain_verified": true,
+        "escalation_chain": ["system", "compliance_officer", "auditor"],
+        "final_decision_maker": "auditor",
+        "three_lines_of_defense_demonstrated": true,
+        "potential_fraud_prevented": 5000000
+      }
+    }
+  ],
+  "summary_statistics": {
+    "total_scenarios": 5,
+    "total_audit_records": 27,
+    "scenarios_by_type": {
+      "pre_deployment": 1,
+      "decision_review": 2,
+      "failure_incident": 1,
+      "revalidation": 1
+    },
+    "roles_involved": {
+      "developer": 8,
+      "compliance_officer": 6,
+      "auditor": 5,
+      "system": 8
+    },
+    "all_scenarios_have_complete_audit_trails": true,
+    "all_scenarios_demonstrate_3LOD": true,
+    "audit_trail_integrity_verified": true
+  }
+}

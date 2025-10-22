@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: afaap-postgres
+    environment:
+      POSTGRES_USER: afaap_admin
+      POSTGRES_PASSWORD: afaap_password
+      POSTGRES_DB: afaap
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U afaap_admin -d afaap"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: python:3.12-slim
+    container_name: afaap-app
+    working_dir: /app
+    environment:
+      DATABASE_URL: postgresql://afaap_admin:afaap_password@postgres:5432/afaap
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: bash -c "pip install -r requirements.txt && tail -f /dev/null"
+
+volumes:
+  postgres_data:
