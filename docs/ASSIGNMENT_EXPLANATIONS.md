@@ -470,7 +470,7 @@ GROUP BY m.model_id;
 - **Regulatory compliance**: MAS requires continuous monitoring
 - **Automated**: Materialized view refreshes hourly
 
-**Evidence**: [docs/FINDINGS.md:200-280](docs/FINDINGS.md#L200-L280) - Model #1 showed 6.2% drift (0.85 → 0.803), but still caught $12.4M in fraud.
+**Evidence**: [docs/FINDINGS.md:200-280](docs/FINDINGS.md#L200-L280) - Model #1 showed 6.2% drift (0.85 → 0.803), triggering remediation workflow.
 
 ### Feature 5: Human-in-the-Loop Review
 
@@ -1070,12 +1070,24 @@ A: "SageMaker focuses on model performance monitoring. We add governance layers:
 
 **Q: What's the ROI calculation based on?**
 
-A: "See [Finding #3](docs/FINDINGS.md#L200-L280) - we calculated:
-- **Benefits**: $12.4M fraud caught + $2.5M saved by blocking bad model + $0.2M from drift detection = $15.1M
-- **Costs**: 20 FTEs × $75K salary + $25K infrastructure = $1.525M
-- **ROI**: (15.1 - 1.525) / 1.525 = 991%
+A: "Honest answer: We CAN'T calculate a real ROI because our data is synthetic—any dollar benefits would be made up.
 
-This assumes a mid-sized bank (1M transactions/year). DBS would see 10x higher ROI due to scale."
+**What We CAN Prove**:
+- **Cost**: $1.525M/year (20 FTEs × $75K + $25K infrastructure) - measurable
+- **Technical Success**: Bad model blocked (F1=0.82), drift detected (6.2% degradation), 16,036 audit records verified
+- **Framework Works**: Threshold enforcement, hash chaining, and Three Lines of Defense all function as designed
+
+**What We CAN'T Prove** (without real bank deployment):
+- Dollar value of fraud prevented (our $12.4M is from fake data)
+- Probability of regulatory fines avoided (no baseline)
+- Customer satisfaction improvements (no real customers)
+
+**Industry Context** (not our data):
+- Knight Capital governance failure: $440M loss in 45 minutes (2012)
+- Wells Fargo fake accounts: $3B in fines (2016-2020)
+- One major incident = 100-1000x framework cost
+
+Bottom line: Cost is $1.525M/year. Benefit is avoiding governance failures. Real ROI requires production deployment and before/after comparison."
 
 **Q: How long would it take to deploy this in production?**
 
@@ -1112,9 +1124,9 @@ This finding validates our framework is realistic, not a toy example."
 
 ### 3. **Realistic Governance Findings**
 - 5 major findings with evidence
-- ROI calculation (991%)
-- Bottleneck analysis (audit completion)
-- Bias detection (fairness metrics)
+- Honest assessment (no fabricated ROI with synthetic data)
+- Bottleneck analysis (audit completion at 3.79%)
+- Bias detection (fairness metrics across transaction types)
 
 ### 4. **Comprehensive Documentation**
 - 25,000+ words across 4 docs
@@ -1136,7 +1148,7 @@ This finding validates our framework is realistic, not a toy example."
 |------|---------|-------------|
 | [README.md](../README.md) | Project overview | Features, quick start, architecture |
 | [docs/USER_GUIDE.md](USER_GUIDE.md) | Complete manual | Workflows, queries, roles, inputs/outputs |
-| [docs/FINDINGS.md](FINDINGS.md) | Analysis results | 5 major findings, ROI calculation |
+| [docs/FINDINGS.md](FINDINGS.md) | Analysis results | 5 major findings, honest cost-benefit analysis |
 | [docs/QUICK_START.md](QUICK_START.md) | 5-min setup | Docker commands, essential queries |
 | [docs/SCHEMA_DOCUMENTATION.md](SCHEMA_DOCUMENTATION.md) | Database design | ER diagrams, table descriptions |
 | [schema/001_initial_schema.sql](../schema/001_initial_schema.sql) | Core tables | Roles, users, models, transactions, decisions |

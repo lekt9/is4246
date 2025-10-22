@@ -186,7 +186,8 @@ ORDER BY COUNT(*) DESC;
 └──────────────────────┴──────────────┴────────────┘
 
 Total Missed Fraud: 80 transactions
-Financial Impact: $12.4M in undetected fraud
+Financial Impact: Undetected fraud from model drift
+(Note: Dollar amounts from synthetic data - real impact requires production deployment)
 ```
 
 **Why This Happened**:
@@ -240,9 +241,11 @@ Financial Impact: $12.4M in undetected fraud
 ✅ **Paper Trail Created**: Complete incident record for regulatory inspection
 
 **Cost-Benefit**:
-- **Cost of Remediation**: $50k (developer time, retraining compute)
-- **Cost of NOT Fixing**: $12.4M+ in ongoing fraud losses
-- **ROI**: 248:1
+- **Cost of Remediation**: ~$50k (developer time, retraining compute)
+- **Cost of NOT Fixing**: Ongoing fraud losses from degraded model
+- **Framework Value**: Early detection allows remediation before major losses accumulate
+
+(Note: Specific dollar ROI cannot be calculated with synthetic data - real benefit requires measuring before/after fraud rates in production)
 
 ---
 
@@ -599,18 +602,25 @@ VALUES ('<model>', '<txn>', TRUE, 0.85);
 | Auditors (3) | - | $500k (salaries) |
 | **Total** | **$60k** | **$1.525M** |
 
-### Benefits
+### Benefits (Qualitative - Cannot Calculate ROI with Synthetic Data)
 
-| Benefit | Annual Value | Calculation |
-|---------|--------------|-------------|
-| **Prevented bad model deployment** | $500k | Avoided 18% false negative rate |
-| **Detected drift early** | $12.4M | Caught $12.4M in undetected fraud |
-| **Reduced false positives** | $200k | Fewer customer disputes |
-| **Regulatory compliance** | Priceless | Avoid MAS fines ($10M+) |
-| **Customer trust** | $2M+ | Prevented reputational damage |
-| **Total** | **$15.1M+** | |
+| Benefit | Value | Why It Matters |
+|---------|-------|----------------|
+| **Prevented bad model deployment** | Verifiable | Blocked fraud_detector_beta (F1=0.82, below 0.85 threshold) |
+| **Detected drift early** | Verifiable | Caught 6.2% performance degradation in fraud_detector_v1 |
+| **Reduced false positives** | Measurable in production | Framework tracks FPR across transaction types |
+| **Regulatory compliance** | Critical | Avoid MAS fines (Knight Capital: $12M, Wells Fargo: $3B precedent) |
+| **Accountability chain** | Verifiable | Complete audit trail with 16,036 records |
 
-**ROI**: 991% ($15.1M / $1.525M)
+**Why We Can't Calculate ROI**:
+- Our synthetic data uses made-up fraud amounts and rates
+- Real ROI requires before/after measurements in production bank
+- Benefits are real (bad model blocked, drift detected) but cannot be quantified in dollars without real data
+
+**Industry Benchmarks** (for reference, not our data):
+- Model governance failures cost: Knight Capital $440M (2012), Wells Fargo $3B (2016-2020)
+- Conservative estimate: Preventing one major incident = 100x framework cost
+- But this is speculative without deploying in real bank
 
 ---
 
@@ -620,12 +630,23 @@ The AFAAP governance framework successfully demonstrates:
 
 1. **Technical Feasibility**: All components work as designed
 2. **Regulatory Alignment**: 75% compliance (path to 100% identified)
-3. **Practical Utility**: Detected real issues (drift, fairness)
-4. **Economic Viability**: 991% ROI
+3. **Practical Utility**: Detected real issues (drift, fairness, bad model blocked)
+4. **Verifiable Governance**: 16,036 immutable audit records with cryptographic verification
 
-**Primary Success**: Framework caught a model drift issue that would have cost $12.4M in undetected fraud.
+**Primary Success**: Framework blocked a bad model (F1=0.82) from deployment and detected 6.2% performance drift in production model - both governance mechanisms worked as designed.
 
 **Primary Challenge**: Audit completion requires automation or more staff (solvable).
+
+**What We Proved with Synthetic Data**:
+- Threshold enforcement works (bad model blocked)
+- Drift detection works (6.2% degradation caught)
+- Audit trail integrity works (SHA-256 hash chaining verified)
+- Three Lines of Defense separation works (developer ≠ officer ≠ auditor)
+
+**What Requires Real Bank Deployment**:
+- Actual fraud prevention dollar amounts
+- ROI calculations (cost measurable at $1.525M/year, benefits real but unquantifiable without production data)
+- Customer impact metrics
 
 **Recommendation**: Deploy to production with automation enhancements.
 
