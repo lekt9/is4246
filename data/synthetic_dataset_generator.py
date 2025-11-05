@@ -604,6 +604,25 @@ class SyntheticDataGenerator:
                 'merchant_category_risk': round(random.uniform(0, 1), 2)
             }
 
+            # Generate SHAP-like model explanation (feature importance)
+            # Simulates explainability output as per AFAAP Design Doc Section 3.1.1, 4.4.3
+            shap_values = {
+                'amount_zscore': round(random.uniform(-0.3, 0.3), 3),
+                'velocity_24h': round(random.uniform(-0.2, 0.4), 3),
+                'country_risk_score': round(random.uniform(-0.1, 0.3), 3),
+                'time_since_last_txn_hours': round(random.uniform(-0.15, 0.15), 3),
+                'merchant_category_risk': round(random.uniform(-0.2, 0.5), 3)
+            }
+
+            # Format as human-readable explanation
+            top_features = sorted(shap_values.items(), key=lambda x: abs(x[1]), reverse=True)[:3]
+            explanation_parts = []
+            for feature, value in top_features:
+                direction = "increases" if value > 0 else "decreases"
+                explanation_parts.append(f"{feature} {direction} fraud probability by {abs(value):.3f}")
+
+            model_explanation = "Top factors: " + "; ".join(explanation_parts) + f". Base prediction: {confidence:.2f}"
+
             flag_timestamp = datetime.now() - timedelta(days=random.randint(0, 90))
 
             # Human review (compliance officer)
@@ -688,6 +707,7 @@ class SyntheticDataGenerator:
                 f"Escalation required for high-risk decision" if escalated_to else None,
                 audit_trail_hash,
                 audit_trail_complete,
+                model_explanation,  # New field for SHAP explainability
                 datetime.now(),
                 datetime.now()
             ))
@@ -699,9 +719,9 @@ class SyntheticDataGenerator:
                 confidence_score, model_features, flag_timestamp,
                 reviewed_by, officer_decision, officer_notes, decision_timestamp,
                 final_decision, escalated_to, escalation_reason,
-                audit_trail_hash, audit_trail_complete, created_at, updated_at
+                audit_trail_hash, audit_trail_complete, model_explanation, created_at, updated_at
             ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             );
         """
 
