@@ -56,7 +56,7 @@ auditor             | Third line of defense - independent oversight and audit | 
 admin               | System administrator with full access                   | 2
 ```
 
-**Evidence**: ✅ **ACCOUNTABILITY ADDRESSED**
+**Evidence**:  **ACCOUNTABILITY ADDRESSED**
 - 3LOD model implemented with role separation
 - 20 users across defense lines
 - Clear responsibility assignment
@@ -87,7 +87,7 @@ fraud_detector_v2        | 0.8500   | 0.0100 | deployed         | PASSES
 fraud_detector_beta      | 0.8200   | 0.0150 | under_review     | FAILS (F1 too low)
 ```
 
-**Evidence**: ✅ **COMPLIANCE ADDRESSED**
+**Evidence**:  **COMPLIANCE ADDRESSED**
 - MAS thresholds enforced: F1 ≥ 0.85, FPR ≤ 1%
 - Bad model (fraud_detector_beta) blocked from deployment
 - Good models (F1 ≥ 0.85) deployed
@@ -97,7 +97,7 @@ fraud_detector_beta      | 0.8200   | 0.0150 | under_review     | FAILS (F1 too 
 - Thresholds: `schema/001_initial_schema.sql:403-406` (governance_config INSERT)
 - Validation: `schema/003_indexes_and_constraints.sql:387-444` (validate_deployment_thresholds function)
 
-**BUG FOUND**: ⚠️ `validate_deployment_thresholds()` has format() bug with NUMERIC types
+**BUG FOUND**:  `validate_deployment_thresholds()` has format() bug with NUMERIC types
 **Impact**: Function exists but throws error when called
 **Workaround**: Manual threshold checks work (as demonstrated above)
 
@@ -128,7 +128,7 @@ high_value_wire_detector | deployed         | dev_johnsonjoshua  | officer_yherr
 ml_ensemble_v1           | pending_approval | dev_johnsonjoshua  | NULL             | NULL
 ```
 
-**Evidence**: ✅ **ACCOUNTABILITY CHAIN TRACKED**
+**Evidence**:  **ACCOUNTABILITY CHAIN TRACKED**
 - Every model has `developed_by` (1st line)
 - Deployed models have `approved_by` (2nd line)
 - Deployed models have `audited_by` (3rd line)
@@ -159,7 +159,7 @@ revalidation_workflows  | 6
 TOTAL:                  | 16,036
 ```
 
-**Evidence**: ✅ **AUDITABILITY ADDRESSED**
+**Evidence**:  **AUDITABILITY ADDRESSED**
 - 16,036 audit records logged automatically
 - Covers 4 critical tables (decisions, models, failures, revalidations)
 - Triggers fire on INSERT/UPDATE (verified by record counts)
@@ -213,7 +213,7 @@ v_current_hash := compute_audit_hash(..., v_previous_hash);  -- ← Chain
 -- Loops through audit records, recomputes hashes, verifies chain
 ```
 
-**Evidence**: ✅ **TAMPER-PROOF AUDIT TRAILS**
+**Evidence**:  **TAMPER-PROOF AUDIT TRAILS**
 - SHA-256 cryptographic hashing
 - Each record hashes previous record (blockchain pattern)
 - Verification function exists to detect tampering
@@ -230,7 +230,7 @@ LIMIT 3;
 -- Record 1: previous_hash = NULL (genesis)
 -- Record 2: previous_hash = Record 1's current_hash
 -- Record 3: previous_hash = Record 2's current_hash
--- ✅ Chain verified
+--  Chain verified
 ```
 
 ---
@@ -254,7 +254,7 @@ total_decisions | human_reviewed | audit_complete | review_pct
 16000           | 606            | 606            | 3.79%
 ```
 
-**Evidence**: ✅ **HUMAN OVERSIGHT IMPLEMENTED**
+**Evidence**:  **HUMAN OVERSIGHT IMPLEMENTED**
 - 606 decisions manually reviewed by compliance officers
 - Review fields: `reviewed_by`, `officer_decision`, `officer_notes`, `decision_timestamp`
 - Audit completion tracked (`audit_trail_complete` flag)
@@ -287,7 +287,7 @@ performance_degradation   | approved          | 0.8823          | 0.0089
 data_distribution_shift   | requires_changes  | 0.8712          | 0.0091
 ```
 
-**Evidence**: ✅ **CONTINUOUS MONITORING**
+**Evidence**:  **CONTINUOUS MONITORING**
 - Re-validation workflows triggered for drift/degradation
 - Status tracking: pending → under_review → approved/rejected
 - New performance metrics tracked after re-validation
@@ -319,7 +319,7 @@ system_error          | medium   | resolved           | FALSE
 false_negative_spike  | critical | closed             | TRUE
 ```
 
-**Evidence**: ✅ **FAILURE ACCOUNTABILITY**
+**Evidence**:  **FAILURE ACCOUNTABILITY**
 - Root cause analysis tracked
 - Remediation workflows enforced
 - Auditor sign-off required for closure (2 incidents awaiting sign-off)
@@ -347,7 +347,7 @@ SELECT m.model_id, COUNT(d.decision_id) AS total_decisions,
 -- [3 more views: fairness_by_type, fairness_by_geography, officer_workload]
 ```
 
-**Evidence**: ✅ **PRODUCTION-READY PERFORMANCE**
+**Evidence**:  **PRODUCTION-READY PERFORMANCE**
 - 23 indexes for query optimization
 - 4 materialized views for dashboard aggregations
 - Partial indexes for specific queries (e.g., pending decisions)
@@ -379,7 +379,7 @@ ci_lower = np.percentile(bootstrap_scores, (alpha/2) * 100)
 ci_upper = np.percentile(bootstrap_scores, (1 - alpha/2) * 100)
 ```
 
-**Evidence**: ✅ **STATISTICAL VALIDITY**
+**Evidence**:  **STATISTICAL VALIDITY**
 - Bootstrap resampling correctly implemented
 - 10,000 iterations (industry standard)
 - 95% confidence intervals calculated
@@ -418,7 +418,7 @@ model_configs = [
 ]
 ```
 
-**Evidence**: ✅ **REALISTIC DATA PATTERNS**
+**Evidence**:  **REALISTIC DATA PATTERNS**
 - Faker library generates real name/email structures
 - Amounts follow statistical distributions (Gaussian, bimodal)
 - Model performance hand-tuned for test scenarios
@@ -432,23 +432,23 @@ model_configs = [
 
 | Requirement | Implementation | Evidence | Status |
 |-------------|---------------|----------|--------|
-| **Accountability** | Three Lines of Defense with role separation | 5 developers, 10 officers, 3 auditors with distinct permissions | ✅ YES |
-| **Auditability** | Immutable audit trails with hash chaining | 16,036 audit records, SHA-256 hashing, verify function | ✅ YES |
-| **Compliance** | MAS thresholds (F1 ≥ 0.85, FPR ≤ 1%) | Governance config table, validation function, bad model blocked | ✅ YES |
-| **Operationalization** | Production-ready database + Python modules | 9 tables, 23 indexes, 4 materialized views, 511 lines of metrics code | ✅ YES |
+| **Accountability** | Three Lines of Defense with role separation | 5 developers, 10 officers, 3 auditors with distinct permissions |  YES |
+| **Auditability** | Immutable audit trails with hash chaining | 16,036 audit records, SHA-256 hashing, verify function |  YES |
+| **Compliance** | MAS thresholds (F1 ≥ 0.85, FPR ≤ 1%) | Governance config table, validation function, bad model blocked |  YES |
+| **Operationalization** | Production-ready database + Python modules | 9 tables, 23 indexes, 4 materialized views, 511 lines of metrics code |  YES |
 
 ### What Actually Works (Verified by Testing)
 
-1. ✅ **Database is live**: 9 tables populated with 16K+ transactions
-2. ✅ **Thresholds enforced**: Model with F1=0.82 is `under_review` status (not deployed)
-3. ✅ **Accountability tracked**: Every model links to developer/approver/auditor
-4. ✅ **Audit trails logged**: 16,036 records across 4 tables
-5. ✅ **Human review tracked**: 606 decisions manually reviewed with justifications
-6. ✅ **Drift detection**: 3 revalidation workflows triggered for performance issues
-7. ✅ **Failure management**: 5 incidents with root cause + auditor sign-off
-8. ✅ **Performance optimized**: 23 indexes + 4 materialized views
-9. ✅ **Statistical rigor**: Bootstrap code with 10K iterations (not actually run on synthetic data, but ready for real data)
-10. ✅ **Realistic data**: Faker + statistical distributions (not pure random)
+1.  **Database is live**: 9 tables populated with 16K+ transactions
+2.  **Thresholds enforced**: Model with F1=0.82 is `under_review` status (not deployed)
+3.  **Accountability tracked**: Every model links to developer/approver/auditor
+4.  **Audit trails logged**: 16,036 records across 4 tables
+5.  **Human review tracked**: 606 decisions manually reviewed with justifications
+6.  **Drift detection**: 3 revalidation workflows triggered for performance issues
+7.  **Failure management**: 5 incidents with root cause + auditor sign-off
+8.  **Performance optimized**: 23 indexes + 4 materialized views
+9.  **Statistical rigor**: Bootstrap code with 10K iterations (not actually run on synthetic data, but ready for real data)
+10.  **Realistic data**: Faker + statistical distributions (not pure random)
 
 ---
 
@@ -470,7 +470,7 @@ format('F1 score %.4f is below threshold %.4f', v_model.f1_score, v_min_f1)
 format('F1 score %s is below threshold %s', v_model.f1_score::TEXT, v_min_f1::TEXT)
 ```
 
-### ⚠️ Observation #1: Low Audit Completion Rate (3.79%)
+###  Observation #1: Low Audit Completion Rate (3.79%)
 **Evidence**: 606 reviews / 16,000 decisions = 3.79% (target: 98%)
 **Is This A Bug?**: NO - this is **realistic operational bottleneck**
 **Explanation**: 10 compliance officers cannot manually review 16,000 decisions quickly
@@ -484,13 +484,13 @@ This actually **demonstrates framework value** - exposes real-world constraints
 
 ## Final Verdict
 
-### ✅ **YES - This Implementation Solves The Assignment**
+###  **YES - This Implementation Solves The Assignment**
 
 **Reasoning**:
 
 1. **Directly Answers Question**: "How can Singapore's financial institutions operationalize AI governance?"
    - Answer: Three Lines of Defense + Immutable Audit Trails + Automated Thresholds + Human Oversight
-   - ✅ Fully implemented in working code
+   -  Fully implemented in working code
 
 2. **Technical Rigor**:
    - Production-ready PostgreSQL database (ACID compliance, RLS, triggers)
@@ -543,7 +543,7 @@ This actually **demonstrates framework value** - exposes real-world constraints
 
 ## Recommendation
 
-### For IS4246 Submission: ✅ **READY**
+### For IS4246 Submission:  **READY**
 
 **This implementation fully addresses the assignment question with working, testable code.**
 
@@ -560,4 +560,4 @@ This actually **demonstrates framework value** - exposes real-world constraints
 ---
 
 **Assessment Complete**: 2025-10-22
-**Verdict**: ✅ Code solves assignment (with 1 minor SQL bug to fix)
+**Verdict**:  Code solves assignment (with 1 minor SQL bug to fix)

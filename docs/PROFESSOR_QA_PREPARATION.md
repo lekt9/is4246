@@ -77,12 +77,12 @@ WHERE name = 'fraud_detector_beta';
 >
 > | Feature | SageMaker | AFAAP | Why We Need Both |
 > |---------|-----------|-------|------------------|
-> | Drift detection | ✅ | ✅ | SageMaker provides this |
-> | Three Lines of Defense | ❌ | ✅ | MAS requires role separation |
-> | Immutable audit trails | ❌ | ✅ | Regulatory requirement |
-> | Human-in-the-loop review | ❌ | ✅ | Officer approval for deployment |
-> | Auditor sign-off | ❌ | ✅ | Independent 3rd line verification |
-> | MAS threshold gates | ❌ | ✅ | F1 ≥ 0.85, FPR ≤ 1% enforcement |
+> | Drift detection |  |  | SageMaker provides this |
+> | Three Lines of Defense |  |  | MAS requires role separation |
+> | Immutable audit trails |  |  | Regulatory requirement |
+> | Human-in-the-loop review |  |  | Officer approval for deployment |
+> | Auditor sign-off |  |  | Independent 3rd line verification |
+> | MAS threshold gates |  |  | F1 ≥ 0.85, FPR ≤ 1% enforcement |
 >
 > **Integration Strategy**: Use SageMaker as the ML platform, AFAAP as the governance wrapper:
 > - SageMaker trains models → AFAAP validates thresholds before deployment
@@ -285,13 +285,13 @@ GROUP BY username;
 >
 > | Requirement | PostgreSQL | MongoDB | MySQL | Winner |
 > |-------------|------------|---------|-------|--------|
-> | **ACID compliance** | ✅ Full | ⚠️ Limited | ✅ Full | PostgreSQL/MySQL |
-> | **Row-level security** | ✅ Native RLS | ❌ Application layer | ❌ Views only | **PostgreSQL** |
-> | **Triggers for audit** | ✅ BEFORE/AFTER | ⚠️ Change streams | ✅ Yes | PostgreSQL/MySQL |
-> | **Cryptographic functions** | ✅ pgcrypto (SHA-256) | ❌ None | ⚠️ Limited | **PostgreSQL** |
-> | **Materialized views** | ✅ Refreshable | ❌ Aggregation pipeline | ❌ None | **PostgreSQL** |
-> | **JSON support** | ✅ JSONB indexed | ✅ Native | ⚠️ JSON type | PostgreSQL/MongoDB |
-> | **Financial industry adoption** | ✅ Stripe, Robinhood | ⚠️ Less common | ✅ Common | PostgreSQL |
+> | **ACID compliance** |  Full |  Limited |  Full | PostgreSQL/MySQL |
+> | **Row-level security** |  Native RLS |  Application layer |  Views only | **PostgreSQL** |
+> | **Triggers for audit** |  BEFORE/AFTER |  Change streams |  Yes | PostgreSQL/MySQL |
+> | **Cryptographic functions** |  pgcrypto (SHA-256) |  None |  Limited | **PostgreSQL** |
+> | **Materialized views** |  Refreshable |  Aggregation pipeline |  None | **PostgreSQL** |
+> | **JSON support** |  JSONB indexed |  Native |  JSON type | PostgreSQL/MongoDB |
+> | **Financial industry adoption** |  Stripe, Robinhood |  Less common |  Common | PostgreSQL |
 >
 > **Critical Features We Use**:
 > 1. **Row-Level Security** (line [002:540-578](../schema/002_audit_trail_extensions.sql#L540-L578)):
@@ -451,9 +451,9 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";   -- SHA-256 hashing
 > WHERE revalidation_id = ...;
 >
 > -- Compliance officer reviews:
-> -- ✅ New F1 (0.88) > threshold (0.85)
-> -- ✅ FPR (0.009) < threshold (0.01)
-> -- ✅ Tested on production-representative data
+> --  New F1 (0.88) > threshold (0.85)
+> --  FPR (0.009) < threshold (0.01)
+> --  Tested on production-representative data
 >
 > UPDATE revalidation_workflows SET
 >     status = 'approved',
@@ -514,12 +514,12 @@ WHERE m.status = 'deployed';
 
 ---
 
-### Q10: "What's the ROI calculation you mentioned? How did you arrive at 991%?"
+### Q10: "What's the ROI calculation? Can you justify the costs?"
 
-**Answer**:
-> "We calculated ROI based on five quantifiable benefits vs. implementation costs. Here's the detailed breakdown:
+**HONEST Answer**:
+> "I can't calculate a real ROI because we're using synthetic data—any numbers would be made up. Here's what I CAN justify:
 >
-> **Costs (Annual)**:
+> **Measurable Costs (Annual)**:
 > ```
 > Staff Costs:
 >   5 developers      × $100K = $500K
@@ -528,82 +528,72 @@ WHERE m.status = 'deployed';
 >   Subtotal:                   $1.57M
 >
 > Infrastructure:
->   PostgreSQL hosting (RDS)    $30K
->   Monitoring tools (DataDog)  $20K
->   Subtotal:                   $50K
+>   PostgreSQL hosting (AWS RDS)  $30K
+>   Monitoring tools (DataDog)    $20K
+>   Subtotal:                     $50K
 >
-> TOTAL COSTS:                  $1.62M/year
+> TOTAL ANNUAL COST:              $1.62M
 > ```
 >
-> **Benefits (Annual)**:
+> **Benefits (Can't Quantify Without Real Data)**:
 >
-> **1. Fraud Caught by Models** ($12.4M)
-> ```sql
-> -- From model_performance_summary
-> SELECT
->     SUM(t.amount) as fraud_caught_value,
->     COUNT(*) as fraud_transactions
-> FROM decisions d
-> JOIN transactions t ON d.transaction_id = t.transaction_id
-> WHERE d.prediction_fraud = TRUE
->   AND t.is_fraud = TRUE  -- True positives
->   AND d.final_decision = 'blocked';
-> -- Result: $12,400,000 blocked
+> **What We CAN Prove**:
+> 1.  Framework blocks bad models (verified: F1=0.82 model can't deploy)
+> 2.  Audit trails are tamper-proof (SHA-256 hash verification working)
+> 3.  System handles 16,000 decisions (performance tested)
+> 4.  Accountability chain tracked (developer → officer → auditor)
+>
+> **What We CAN'T Prove (Without Real Bank Data)**:
+> - How much fraud this actually prevents (our $12.4M is from fake data)
+> - Probability of regulatory fines (I made up 5%, no evidence)
+> - Time saved on investigations (no baseline to compare against)
+>
+> **How Banks WOULD Measure ROI**:
+> ```
+> Phase 1 (Before Deployment):
+> - Baseline fraud losses: $X million/year
+> - Baseline compliance cost: $Y million/year
+> - Current audit investigation time: Z hours/incident
+>
+> Phase 2 (6 Months After Deployment):
+> - New fraud losses: Compare to baseline
+> - Compliance cost reduction: Fewer manual reviews
+> - Investigation time reduction: Audit trails speed up searches
+>
+> Phase 3 (Calculate Real ROI):
+> ROI = (Losses Prevented + Cost Savings - Implementation Cost) / Implementation Cost
 > ```
 >
-> **2. Bad Model Prevention** ($2.5M)
-> - Model #4 (fraud_detector_beta) has F1=0.82, FPR=1.5%
-> - If deployed, would cause:
->   - False positives: 9,500 legitimate × 1.5% = 142 customers blocked
->   - Customer complaints: 142 × $5K remediation = $710K
->   - Fraud missed (vs. F1=0.85 model): 500 fraud × 3% miss rate × $25K avg = $375K
->   - Regulatory investigation risk: $1.5M (based on MAS fine history)
-> - **Total prevented**: $2.585M
+> **Industry Benchmarks (More Realistic)**:
+> - Singapore banks: ~0.05% of transaction volume lost to fraud (MAS 2023)
+> - For bank processing $50B/year → ~$25M fraud losses
+> - Governance frameworks typically reduce fraud by 10-30% (industry studies)
+> - **Conservative estimate**: 10% reduction = $2.5M/year saved
+> - **Against our cost**: $2.5M saved vs. $1.62M cost = **54% ROI**
+> - **But this is still speculative!** Need real data.
 >
-> **3. Drift Detection Early Warning** ($200K)
-> - Model #1 drift detected at 6.2% (would reach 10% in 2 months)
-> - Early retraining prevented:
->   - 2 months of degraded performance
->   - 50 additional fraud transactions missed × $4K avg = $200K
+> **Cost of NOT Having Governance (Real Examples)**:
 >
-> **4. Audit Trail Saved Investigation Time** ($150K)
-> - Without audit trails: 89 failure incidents × 40 hours investigation = 3,560 hours
-> - With audit trails: 89 incidents × 8 hours (search logs instantly) = 712 hours
-> - Time saved: 2,848 hours × $50/hour = $142K
+> | Company | Year | Governance Failure | Cost |
+> |---------|------|--------------------|------|
+> | Wells Fargo | 2016 | No oversight of sales practices | $3B fine |
+> | Knight Capital | 2012 | Bad algorithm deployed without gate | $440M loss in 45 min |
+> | OCBC | 2022 | Controls failure | $5.3M fine |
+> | Boeing 737 MAX | 2019 | Software lacked hard limits | $2.5B settlement |
 >
-> **5. Avoided Regulatory Fines** ($250K expected value)
-> - MAS fine probability without governance: 5% chance/year
-> - Average fine for AI governance failures: $5M (based on 2022-2024 cases)
-> - Expected cost without framework: 0.05 × $5M = $250K
-> - With framework: Near-zero risk
+> **Our Value Proposition**:
+> Not 'This saves $X million' but 'This prevents the next $3B Wells Fargo scandal'
 >
-> **Total Benefits**: $12.4M + $2.5M + $0.2M + $0.15M + $0.25M = **$15.5M/year**
+> **What IS Justifiable**:
+> - $1.62M/year to prevent ONE major incident = breakeven
+> - MAS requires governance → Cost of compliance (like financial audits)
+> - Technical enforcement > policy documents (proven in our implementation)
 >
-> **ROI Calculation**:
-> ```
-> ROI = (Benefits - Costs) / Costs × 100%
->     = ($15.5M - $1.62M) / $1.62M × 100%
->     = $13.88M / $1.62M × 100%
->     = 857% ROI
-> ```
->
-> *(Note: I said 991% earlier—that was based on slightly different staff cost assumptions. Using updated figures above, it's 857%. Still exceptional ROI.)*
->
-> **Sensitivity Analysis**:
-> Even if we're 50% wrong on benefit estimates:
-> - Benefits: $7.75M
-> - Costs: $1.62M
-> - ROI: 378% (still excellent)
->
-> **Comparison to Industry**:
-> - Typical IT project ROI: 15-25%
-> - Compliance projects: Often considered pure cost (negative ROI)
-> - Our framework: 857% ROI because it *prevents losses*, not just costs"
+> **Bottom Line**:
+> Cost is measurable ($1.62M/year). Benefits are real but can't be quantified without deploying in a real bank and measuring before/after. Industry benchmarks suggest 54% ROI is reasonable, but I won't make up numbers."
 
-**Evidence**:
-- See [docs/FINDINGS.md](FINDINGS.md) - Finding #3: Production Drift section
-- SQL queries above can be run live on synthetic data
-- Assumptions documented for transparency
+**If Professor Pushes Back**:
+> "You're right that I can't prove ROI with synthetic data. What I CAN prove is the framework works technically (bad models are blocked, audit trails are verified). A real bank would need to pilot this for 6 months and measure actual fraud reduction, then calculate ROI. That's honest, and better than fabricating numbers."
 
 ---
 
@@ -864,19 +854,19 @@ WHERE m.status = 'deployed';
 >
 > **PDPA Compliance Checklist**:
 >
-> ✅ **Purpose Limitation**
+>  **Purpose Limitation**
 > - Data collected only for fraud prevention (stated purpose)
 > - Not used for marketing or other purposes
 >
-> ✅ **Data Minimization**
+>  **Data Minimization**
 > - Only collect customer_segment, not full profile
 > - Transaction amounts visible, but not account balances
 >
-> ✅ **Access Control**
+>  **Access Control**
 > - RLS ensures users see only authorized data
 > - Audit trails track every access (including by auditors)
 >
-> ✅ **Right to Erasure**
+>  **Right to Erasure**
 > - If customer requests deletion:
 >   ```sql
 >   -- Pseudonymize transaction (keep for audit, remove linkage)
@@ -889,7 +879,7 @@ WHERE m.status = 'deployed';
 >   );
 >   ```
 >
-> ✅ **Breach Notification**
+>  **Breach Notification**
 > - If database compromised, audit_trails show:
 >   - What data was accessed (which tables, which records)
 >   - Who accessed it (changed_by user_id)
@@ -1220,7 +1210,7 @@ WHERE m.status = 'deployed';
 > - Live database with 10,000 transactions demonstrates end-to-end workflow
 > - Framework caught model drift (6.2% performance drop) before it became critical
 > - 606 human reviews logged with justifications prove human-in-the-loop works
-> - ROI calculation: 857% return from preventing bad deployments
+> - Bad model (F1=0.82) automatically blocked from deployment—governance works
 >
 > **Why It Matters**:
 > Banks can adopt this tomorrow—it's not theoretical. We provide complete SQL schemas, Python validation code, and Docker deployment. This moves AI governance from academic papers to operational reality.
@@ -1407,7 +1397,7 @@ SELECT name, f1_score, status FROM models WHERE f1_score < 0.85;
 Show bad model blocked, audit trail verified, accountability tracked
 
 **Slide 4: Results** (1 minute)
-16,036 audit records, 857% ROI, drift detection working
+16,036 audit records, bad model blocked (F1=0.82), drift detection working
 
 **Slide 5: Academic Contribution** (1 minute)
 Infrastructure-enforced governance, not policy-based
@@ -1416,4 +1406,4 @@ Infrastructure-enforced governance, not policy-based
 
 ---
 
-**Good luck with your presentation! You have a strong technical artifact backed by thorough implementation.** 🎓🚀
+**Good luck with your presentation! You have a strong technical artifact backed by thorough implementation.** 

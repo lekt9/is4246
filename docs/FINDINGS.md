@@ -29,13 +29,13 @@ Model: fraud_detector_v1
 ├── Training F1: 0.89
 ├── Training FPR: 0.8%
 ├── Status: DEPLOYED
-└── Reason: Meets all thresholds ✓
+└── Reason: Meets all thresholds 
 ```
 
 **Finding**: The automated threshold validation (`validate_deployment_thresholds()`) correctly:
-- ✅ Approved 3 models meeting F1 ≥ 0.85 AND FPR ≤ 1%
-- ❌ Blocked 1 model with F1 = 0.82 (below threshold)
-- ⏸️  Held 1 model pending approval despite meeting thresholds (awaiting compliance officer review)
+-  Approved 3 models meeting F1 ≥ 0.85 AND FPR ≤ 1%
+-  Blocked 1 model with F1 = 0.82 (below threshold)
+-   Held 1 model pending approval despite meeting thresholds (awaiting compliance officer review)
 
 **Implication**: Framework prevents deployment of models that would:
 - Miss >15% of fraud (low F1)
@@ -60,7 +60,7 @@ Total Decisions: 16,000
 └── Audit Trail Complete: 606 (3.79%)
 
 Target: 98% audit completion
-Status: 🔴 CRITICAL GAP (94.21% below target)
+Status:  CRITICAL GAP (94.21% below target)
 
 Officer Workload (average):
 ├── Assigned: 1,600 decisions per officer
@@ -149,13 +149,13 @@ Model: fraud_detector_v1
 ├── Production F1: 0.8345
 ├── Degradation: 6.2%
 ├── Threshold: 5%
-└── Status: 🔴 EXCEEDS ACCEPTABLE DRIFT
+└── Status:  EXCEEDS ACCEPTABLE DRIFT
 
 Model: fraud_detector_v2
 ├── Training F1: 0.8500
 ├── Production F1: 0.8213
 ├── Degradation: 3.4%
-└── Status: ✅ ACCEPTABLE
+└── Status:  ACCEPTABLE
 ```
 
 **Root Cause Investigation**:
@@ -234,11 +234,11 @@ Financial Impact: Undetected fraud from model drift
 
 **Lessons Learned**:
 
-✅ **Framework Detected the Issue**: Automated monitoring caught 6.2% degradation
+ **Framework Detected the Issue**: Automated monitoring caught 6.2% degradation
 
-✅ **Accountability Established**: Developer responsible, auditor must sign off
+ **Accountability Established**: Developer responsible, auditor must sign off
 
-✅ **Paper Trail Created**: Complete incident record for regulatory inspection
+ **Paper Trail Created**: Complete incident record for regulatory inspection
 
 **Cost-Benefit**:
 - **Cost of Remediation**: ~$50k (developer time, retraining compute)
@@ -271,7 +271,7 @@ Disparity Calculation:
 - Disparity: (1.20% - 0.65%) / 0.65% = 84.6%
 
 Threshold: 10%
-Status: 🔴 VIOLATION (84.6% >> 10%)
+Status:  VIOLATION (84.6% >> 10%)
 ```
 
 **Impact**:
@@ -406,7 +406,7 @@ SELECT * FROM verify_audit_integrity('decisions',
 │   TRUE   │      NULL       │ Audit trail integrity verified     │
 └──────────┴─────────────────┴────────────────────────────────────┘
 
-✅ SUCCESS: Blockchain-style hash chain intact
+ SUCCESS: Blockchain-style hash chain intact
 ```
 
 **Test 2: Simulated Tampering**
@@ -441,16 +441,16 @@ SELECT * FROM verify_audit_integrity('decisions', '<decision_id>');
 │          │                         │ shows retroactive change    │
 └──────────┴─────────────────────────┴─────────────────────────────┘
 
-🔴 TAMPERING DETECTED
+ TAMPERING DETECTED
 ```
 
 **What This Proves**:
 
-✅ **Immutability**: Can't change past decisions without leaving a trace
+ **Immutability**: Can't change past decisions without leaving a trace
 
-✅ **Accountability**: Every change is attributed to a user with timestamp
+ **Accountability**: Every change is attributed to a user with timestamp
 
-✅ **Auditability**: Regulators can verify no unauthorized modifications
+ **Auditability**: Regulators can verify no unauthorized modifications
 
 **Row-Level Security Test**:
 ```sql
@@ -470,8 +470,8 @@ SELECT * FROM audit_trails LIMIT 100;
 │ - User role = 'auditor' (can see everything)         │
 └──────────────────────────────────────────────────────┘
 
-✅ SUCCESS: Officers can only see their own actions
-✅ SUCCESS: Auditors can see everything
+ SUCCESS: Officers can only see their own actions
+ SUCCESS: Auditors can see everything
 ```
 
 **Performance Impact**:
@@ -493,9 +493,9 @@ VALUES ('<model>', '<txn>', TRUE, 0.85);
 ```
 
 **Findings**:
-- ✅ Audit overhead: 5x (acceptable)
-- ✅ Storage: 16,036 audit records = 45 MB (minimal)
-- ✅ Query performance: No degradation (indexed)
+-  Audit overhead: 5x (acceptable)
+-  Storage: 16,036 audit records = 45 MB (minimal)
+-  Query performance: No degradation (indexed)
 
 ---
 
@@ -503,18 +503,18 @@ VALUES ('<model>', '<txn>', TRUE, 0.85);
 
 ### What Works Well
 
-1. ✅ **Threshold Validation**: Successfully blocks underperforming models
-2. ✅ **Audit Trails**: Tamper-proof, blockchain-style verification works
-3. ✅ **Model Drift Detection**: Catches production degradation automatically
-4. ✅ **Fairness Monitoring**: Identifies disparity requiring remediation
-5. ✅ **Accountability**: Every decision traceable to a person with timestamp
+1.  **Threshold Validation**: Successfully blocks underperforming models
+2.  **Audit Trails**: Tamper-proof, blockchain-style verification works
+3.  **Model Drift Detection**: Catches production degradation automatically
+4.  **Fairness Monitoring**: Identifies disparity requiring remediation
+5.  **Accountability**: Every decision traceable to a person with timestamp
 
 ### Challenges Identified
 
-1. 🔴 **Audit Completion**: 3.79% vs 98% target (scalability issue)
-2. 🔴 **Officer Workload**: 1,600 pending reviews per officer
-3. ⚠️  **Model Drift**: 6.2% degradation exceeds 5% threshold
-4. ⚠️  **Fairness Disparity**: 84.6% disparity (though justified by risk)
+1.  **Audit Completion**: 3.79% vs 98% target (scalability issue)
+2.  **Officer Workload**: 1,600 pending reviews per officer
+3.   **Model Drift**: 6.2% degradation exceeds 5% threshold
+4.   **Fairness Disparity**: 84.6% disparity (though justified by risk)
 
 ### Recommendations
 
@@ -573,14 +573,14 @@ VALUES ('<model>', '<txn>', TRUE, 0.85);
 
 | Requirement | Status | Evidence |
 |-------------|--------|----------|
-| **Pre-deployment validation** | ✅ PASS | `validate_deployment_thresholds()` blocks F1<0.85 |
-| **Audit trail completion** | 🔴 FAIL | 3.79% vs 98% target (remediation plan in place) |
-| **Model lineage tracking** | ✅ PASS | `parent_model_id` + training data provenance |
-| **Human-in-the-loop review** | ✅ PASS | All high-risk decisions reviewed by officers |
-| **Failure incident tracking** | ✅ PASS | Complete root cause analysis + remediation |
-| **Auditor sign-off** | ✅ PASS | All incidents require auditor approval to close |
-| **Re-validation triggers** | ✅ PASS | New fraud type triggers automatic workflow |
-| **Fairness monitoring** | ⚠️  PARTIAL | Disparity detected, remediation plan documented |
+| **Pre-deployment validation** |  PASS | `validate_deployment_thresholds()` blocks F1<0.85 |
+| **Audit trail completion** |  FAIL | 3.79% vs 98% target (remediation plan in place) |
+| **Model lineage tracking** |  PASS | `parent_model_id` + training data provenance |
+| **Human-in-the-loop review** |  PASS | All high-risk decisions reviewed by officers |
+| **Failure incident tracking** |  PASS | Complete root cause analysis + remediation |
+| **Auditor sign-off** |  PASS | All incidents require auditor approval to close |
+| **Re-validation triggers** |  PASS | New fraud type triggers automatic workflow |
+| **Fairness monitoring** |   PARTIAL | Disparity detected, remediation plan documented |
 
 **Overall Compliance**: 75% (6 of 8 requirements fully met)
 

@@ -145,7 +145,7 @@ AFAAP implements a military-style defense model where **three independent groups
 - Approve or reject deployment
 - Review flagged transactions in production
 
-**Example**: Bob (compliance officer) reviews Alice's model. He verifies F1=0.89 ≥ 0.85 ✓ and FPR=0.8% ≤ 1% ✓. He checks fairness metrics and approves deployment.
+**Example**: Bob (compliance officer) reviews Alice's model. He verifies F1=0.89 ≥ 0.85  and FPR=0.8% ≤ 1% . He checks fairness metrics and approves deployment.
 
 #### 3rd Line: Auditors
 **What they do**: Independent oversight and investigation
@@ -541,11 +541,11 @@ APPROVE  REJECT ───> Back to developer
 ```
 
 **Success Indicators**:
-- ✅ F1 ≥ 0.85
-- ✅ FPR ≤ 1%
-- ✅ Complete documentation
-- ✅ Three lines of defense all signed off
-- ✅ Immutable audit trail created
+-  F1 ≥ 0.85
+-  FPR ≤ 1%
+-  Complete documentation
+-  Three lines of defense all signed off
+-  Immutable audit trail created
 
 ---
 
@@ -902,7 +902,7 @@ SELECT * FROM get_model_production_metrics('<model_id>');
 - **FPR = 0.8%**: 0.8% of legitimate transactions flagged (80 out of 10,000)
 - **Confidence Interval**: [0.86, 0.91] means we're 95% confident true F1 is in this range
 
-**Meets Deployment Threshold?** ✅ YES (F1 ≥ 0.85, FPR ≤ 1%)
+**Meets Deployment Threshold?**  YES (F1 ≥ 0.85, FPR ≤ 1%)
 
 ---
 
@@ -941,11 +941,11 @@ ORDER BY fpr DESC;
 ```
 Audit Trail Completion Rate: 3.79%
 Target: 98%
-Status: 🔴 BELOW THRESHOLD
+Status:  BELOW THRESHOLD
 
 Review Turnaround Time: 2.5 days (average)
 Target: < 5 days
-Status: ✅ MEETS TARGET
+Status:  MEETS TARGET
 
 Pending Reviews: 15,394
 Reviewed: 606
@@ -1041,18 +1041,18 @@ GROUP BY m.model_id, m.name, m.status, m.f1_score, mps.*;
 # Q3 2024 AI Governance Compliance Report
 
 ## Model Performance
-- fraud_detector_v1: F1=0.89 (production=0.87) ✅
-- fraud_detector_v2: F1=0.85 (production=0.84) ⚠️  (borderline)
-- fraud_detector_beta: F1=0.82 (under review) 🔴
+- fraud_detector_v1: F1=0.89 (production=0.87) 
+- fraud_detector_v2: F1=0.85 (production=0.84)   (borderline)
+- fraud_detector_beta: F1=0.82 (under review) 
 
 ## Audit Trail Compliance
-- Completion Rate: 3.79% (target: 98%) 🔴
-- Average Review Time: 2.5 days (target: <5 days) ✅
+- Completion Rate: 3.79% (target: 98%) 
+- Average Review Time: 2.5 days (target: <5 days) 
 
 ## Incidents
 - Total: 10
 - Critical: 2
-- All signed off by auditors: ✅
+- All signed off by auditors: 
 
 ## Actions Taken
 1. fraud_detector_v2 flagged for re-validation (borderline performance)
@@ -1326,7 +1326,7 @@ ORDER BY fpr DESC;
 
 **Disparity Threshold**: 10% (governance rule)
 
-**Status**: 🔴 **VIOLATION** (85% disparity > 10% threshold)
+**Status**:  **VIOLATION** (85% disparity > 10% threshold)
 
 **Root Cause**:
 - Wire transfers are legitimately higher risk
@@ -1507,14 +1507,14 @@ SELECT * FROM verify_audit_integrity('decisions', '<decision_id>');
 ### What Gets Audited?
 
 **Tables with full audit trails**:
-- ✅ `models` - Every status change, approval, deployment
-- ✅ `decisions` - Every review, decision, escalation
-- ✅ `revalidation_workflows` - Every trigger, review, approval
-- ✅ `failure_incidents` - Every update, remediation, sign-off
+-  `models` - Every status change, approval, deployment
+-  `decisions` - Every review, decision, escalation
+-  `revalidation_workflows` - Every trigger, review, approval
+-  `failure_incidents` - Every update, remediation, sign-off
 
 **What's NOT audited**:
-- ❌ `transactions` - Raw data (performance reasons)
-- ❌ `users` - Privacy (only creation audited)
+-  `transactions` - Raw data (performance reasons)
+-  `users` - Privacy (only creation audited)
 
 ---
 

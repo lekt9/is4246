@@ -32,10 +32,10 @@
 
 This GitHub repository provides a **production-ready governance framework** that:
 
-1. ✅ **Ensures Accountability**: Three Lines of Defense (3LOD) model with role-based access control
-2. ✅ **Guarantees Auditability**: Immutable audit trails with blockchain-style hash chaining
-3. ✅ **Enforces Compliance**: Automated threshold validation (F1 ≥ 0.85, FPR ≤ 1%) per MAS guidelines
-4. ✅ **Operationalizes Governance**: Complete database schemas, metrics pipelines, and workflows
+1. **Ensures Accountability**: Three Lines of Defense (3LOD) model with role-based access control
+2. **Guarantees Auditability**: Immutable audit trails with blockchain-style hash chaining
+3. **Enforces Compliance**: Automated threshold validation (F1 ≥ 0.85, FPR ≤ 1%) per MAS guidelines
+4. **Operationalizes Governance**: Complete database schemas, metrics pipelines, and workflows
 
 **Evidence**: 16,036 audit trail records across 10,000 transactions demonstrate the system works end-to-end.
 
@@ -84,8 +84,8 @@ Financial institutions deploying AI fraud detection models face **three critical
    ├─ Bootstrap resampling (10,000 iterations) ensures statistical rigor
    └─ Model inserted into `models` table with status='pending_approval'
 
-   📍 CODE: metrics/performance_metrics.py:15-80
-   📊 RESULT: 5 models generated (see Finding #1)
+   CODE: metrics/performance_metrics.py:15-80
+   RESULT: 5 models generated (see Finding #1)
 
 2. DEPLOYMENT GATE (Automated Compliance Check)
    ├─ validate_deployment_thresholds(model_id) runs automatically
@@ -93,8 +93,8 @@ Financial institutions deploying AI fraud detection models face **three critical
    ├─ If PASS: status → 'approved', deployed_at → NOW()
    └─ If FAIL: status → 'pending_approval', failing_criteria logged
 
-   📍 CODE: schema/003_indexes_and_constraints.sql:150-200
-   📊 RESULT: Model #4 (F1=0.82) blocked from deployment
+   CODE: schema/003_indexes_and_constraints.sql:150-200
+   RESULT: Model #4 (F1=0.82) blocked from deployment
 
 3. PRODUCTION INFERENCE (Real-time Fraud Detection)
    ├─ Transaction arrives (amount, merchant, location, etc.)
@@ -102,8 +102,8 @@ Financial institutions deploying AI fraud detection models face **three critical
    ├─ Confidence score calculated (0.0 to 1.0)
    └─ Decision logged in `decisions` table
 
-   📍 CODE: data/synthetic_dataset_generator.py:200-250
-   📊 RESULT: 16,000 decisions generated (10,000 transactions)
+   CODE: data/synthetic_dataset_generator.py:200-250
+   RESULT: 16,000 decisions generated (10,000 transactions)
 
 4. HUMAN-IN-THE-LOOP (Compliance Officer - 2nd Line)
    ├─ High-risk decisions flagged (confidence < 0.7 OR amount > $10,000)
@@ -112,8 +112,8 @@ Financial institutions deploying AI fraud detection models face **three critical
    ├─ Final decision = AI + human review
    └─ Review logged with justification text
 
-   📍 CODE: schema/001_initial_schema.sql:150-200
-   📊 RESULT: 606 decisions reviewed, avg 2.5 days turnaround
+   CODE: schema/001_initial_schema.sql:150-200
+   RESULT: 606 decisions reviewed, avg 2.5 days turnaround
 
 5. CONTINUOUS MONITORING (Drift Detection)
    ├─ model_performance_summary materialized view aggregates production metrics
@@ -121,8 +121,8 @@ Financial institutions deploying AI fraud detection models face **three critical
    ├─ If drift > 5%: alert triggered, re-validation required
    └─ Workflow created in `revalidation_workflows` table
 
-   📍 CODE: schema/003_indexes_and_constraints.sql:50-100
-   📊 RESULT: Model #1 drift detected (0.85 → 0.803 = 6.2% drop)
+   CODE: schema/003_indexes_and_constraints.sql:50-100
+   RESULT: Model #1 drift detected (0.85 → 0.803 = 6.2% drop)
 
 6. FAILURE INVESTIGATION (Auditor - 3rd Line)
    ├─ High-impact failures logged (false negatives > $50,000)
@@ -130,8 +130,8 @@ Financial institutions deploying AI fraud detection models face **three critical
    ├─ Remediation actions assigned to developers
    └─ Incident closed after verification
 
-   📍 CODE: schema/001_initial_schema.sql:250-300
-   📊 RESULT: 89 failure incidents logged and investigated
+   CODE: schema/001_initial_schema.sql:250-300
+   RESULT: 89 failure incidents logged and investigated
 
 7. AUDIT TRAIL (Continuous, Immutable Logging)
    ├─ Every action triggers audit_trail insertion
@@ -139,8 +139,8 @@ Financial institutions deploying AI fraud detection models face **three critical
    ├─ current_audit_hash = SHA256(current record + previous_hash)
    └─ verify_audit_integrity() validates chain integrity
 
-   📍 CODE: schema/002_audit_trail_extensions.sql:1-100
-   📊 RESULT: 16,036 audit records, 100% hash chain valid
+   CODE: schema/002_audit_trail_extensions.sql:1-100
+   RESULT: 16,036 audit records, 100% hash chain valid
 ```
 
 ---
@@ -624,9 +624,9 @@ GROUP BY t.transaction_type;
 
 | Option | Pros | Cons | Verdict |
 |--------|------|------|---------|
-| **Real banking data** | Most realistic | ❌ PDPA violations<br>❌ Cannot share on GitHub<br>❌ Requires bank partnerships | ❌ Not feasible |
-| **Kaggle fraud datasets** | Publicly available | ❌ No user roles<br>❌ No audit trails<br>❌ Can't demonstrate 3LOD | ❌ Wrong structure |
-| **Synthetic data (Faker)** | ✅ Shareable<br>✅ Reproducible<br>✅ Privacy-safe<br>✅ Custom schema | Artificial | ✅ **CHOSEN** |
+| **Real banking data** | Most realistic |  PDPA violations<br> Cannot share on GitHub<br> Requires bank partnerships |  Not feasible |
+| **Kaggle fraud datasets** | Publicly available |  No user roles<br> No audit trails<br> Can't demonstrate 3LOD |  Wrong structure |
+| **Synthetic data (Faker)** |  Shareable<br> Reproducible<br> Privacy-safe<br> Custom schema | Artificial |  **CHOSEN** |
 
 ### What Faker Generates (Not Pure Randomness)
 
@@ -801,10 +801,10 @@ GROUP BY table_name;
 ```
 
 **Results** (from [docs/FINDINGS.md](docs/FINDINGS.md)):
-- ✅ All constraints satisfied
-- ✅ 16,036 audit records generated
-- ✅ No orphaned foreign keys
-- ✅ Hash chain 100% valid
+-  All constraints satisfied
+-  16,036 audit records generated
+-  No orphaned foreign keys
+-  Hash chain 100% valid
 
 ---
 

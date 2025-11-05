@@ -5,11 +5,11 @@
 ### What You Have
 
 A complete AI governance framework with:
-- ✅ PostgreSQL database (port 5434)
-- ✅ 10,000 synthetic transactions
-- ✅ 5 fraud detection models
-- ✅ 16,000+ audit trail records
-- ✅ Complete compliance infrastructure
+-  PostgreSQL database (port 5434)
+-  10,000 synthetic transactions
+-  5 fraud detection models
+-  16,000+ audit trail records
+-  Complete compliance infrastructure
 
 ### Start the System
 
@@ -76,11 +76,11 @@ FROM decisions;
 
 | Metric | Current Value | Target | Status |
 |--------|---------------|--------|--------|
-| Models Deployed | 3 | - | ✅ |
-| F1 Score (avg) | 0.87 | ≥ 0.85 | ✅ |
-| FPR (avg) | 0.86% | ≤ 1% | ✅ |
-| Audit Completion | 3.79% | ≥ 98% | 🔴 |
-| Review Time | 2.5 days | ≤ 5 days | ✅ |
+| Models Deployed | 3 | - |  |
+| F1 Score (avg) | 0.87 | ≥ 0.85 |  |
+| FPR (avg) | 0.86% | ≤ 1% |  |
+| Audit Completion | 3.79% | ≥ 98% |  |
+| Review Time | 2.5 days | ≤ 5 days |  |
 
 ### Understanding the Low Audit Completion (3.79%)
 
