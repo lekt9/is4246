@@ -22,10 +22,6 @@ AFAAP provides a **complete governance framework** that:
 4. **Enforces human oversight** through compliance officer reviews
 5. **Demonstrates regulatory compliance** with complete audit documentation
 
-### Performance Evaluation Results
-
-See [FINDINGS.md](docs/FINDINGS.md) for validation results and detailed analysis.
-
 ## Overview
 
 AFAAP implements a comprehensive governance mechanism based on the **Three Lines of Defense (3LOD)** model:
@@ -280,3 +276,7 @@ Then after, the validation metrics module will extract all these useful informat
 │ Output: Statistical dashboard with pass/fail status                │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+### Performance Evaluation Results
+
+See [FINDINGS.md](docs/FINDINGS.md) for sample validation results and detailed analysis - consisting of a csv file, dahsboard and and findings.md file which showcases the results.
