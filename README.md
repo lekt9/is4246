@@ -214,7 +214,7 @@ experimental_ml_model_v2: hardcoded_fpr=0.0150, deployed=False
 
 These transactions are to mimic real life transactions.
 
-**4. Decisions (8,000 model predictions)**
+**4. Decisions (10,000 model predictions)**
 
 This is the core simulation - how model predictions are generated:
 
@@ -240,9 +240,35 @@ The officer then decides whether to block, approve, or escalate the transaction 
 
 About 10% of flagged cases remain pending due to workload.
 
-Audit logging – Finally, each transaction’s details (model prediction, confidence, human decision, and risk features) are stored in a database, along with a cryptographic hash to prevent tampering.
+Audit logging – Finally, each transaction's details (model prediction, confidence, human decision, and risk features) are stored in a database, along with a cryptographic hash to prevent tampering.
 
-Then after, the validation metrics module will extract all these useful information and present export it into a csv for our review. the data will be savedx under /results/evaluation_xxxxxxx_xxxxx.
+Then after, the validation metrics module will extract all these useful information and present export it into a csv for our review. The data will be saved under `/results/evaluation_YYYYMMDD_HHMMSS/`.
+
+---
+
+### Stage 2: Performance Metrics Analysis
+
+**File:** `metrics/performance_metrics.py`  
+**Purpose:** Analyzes model performance from the generated decisions and produces evaluation reports
+
+#### What Gets Analyzed:
+
+**1. Per-Model Performance Metrics**
+- F1 Score with 95% confidence intervals (bootstrap sampling)
+- False Positive Rate (FPR) with confidence intervals
+- Precision and Recall
+- Confusion Matrix (TP, FP, TN, FN)
+
+**2. Fairness Analysis**
+- FPR breakdown by transaction type
+- Identification of bias across different transaction categories
+
+**3. Output Files Generated**
+- `per_model_evaluation_dashboard.png` - Visual comparison of all models
+- `per_model_results.csv` - Detailed metrics data
+- `findings.md` - Comprehensive analysis with recommendations
+
+---
 
 ### How They Work Together
 
