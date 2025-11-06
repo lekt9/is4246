@@ -155,7 +155,7 @@ docker exec afaap-app python metrics/performance_metrics.py
 The validation uses **two separate tools** that work in sequence:
 
 ```
-Step 1: synthetic_dataset_generator.py → Creates test data and runs simualtion with 2 simulated AI fraud test models.
+Step 1: synthetic_dataset_generator.py → Creates test data and runs simualtion with 3 simulated AI fraud test models.
                     ↓
             PostgreSQL Database
                     ↓
