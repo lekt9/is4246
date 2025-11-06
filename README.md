@@ -22,7 +22,9 @@ AFAAP provides a **complete governance framework** that:
 4. **Enforces human oversight** through compliance officer reviews
 5. **Demonstrates regulatory compliance** with complete audit documentation
 
-See [FINDINGS.md](docs/FINDINGS.md) for complete validation results.
+### Performance Evaluation Results
+
+See [FINDINGS.md](docs/FINDINGS.md) for validation results and detailed analysis.
 
 ## Overview
 

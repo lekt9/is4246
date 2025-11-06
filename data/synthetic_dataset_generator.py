@@ -270,8 +270,8 @@ class SyntheticDataGenerator:
             # High-performing model (exceeds thresholds)
             {
                 'name': 'fraud_detector_v1',
-                'f1': 0.89,
-                'fpr': 0.008,
+                'f1': 0.92,
+                'fpr': 0.005,
                 'status': 'deployed',
                 'fraud_types': ['credit_card_fraud', 'wire_fraud']
             },

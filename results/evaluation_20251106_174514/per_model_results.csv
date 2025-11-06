@@ -1,0 +1,21 @@
+AFAAP Per-Model Evaluation Results
+Generated,2025-11-06 17:45:15
+Total Decisions,30000
+Number of Models,3
+
+=== PER-MODEL PERFORMANCE BREAKDOWN ===
+Model Name,Version,Decisions,F1,F1_CI_Lower,F1_CI_Upper,FPR,FPR_CI_Lower,FPR_CI_Upper,Precision,Recall,TP,FP,TN,FN,F1_Status,FPR_Status
+fraud_detector_beta,v3.0.0,10000,0.7658,0.7359,0.7940,0.0155,0.0130,0.0180,0.7308,0.8044,399,147,9357,97,FAIL,FAIL
+fraud_detector_v1,v1.0.0,10000,0.9074,0.8887,0.9252,0.0057,0.0042,0.0073,0.8989,0.9160,480,54,9422,44,PASS,PASS
+fraud_detector_v2,v2.0.0,10000,0.8280,0.8012,0.8524,0.0093,0.0074,0.0113,0.8247,0.8313,414,88,9414,84,FAIL,FAIL
+
+=== FAIRNESS ANALYSIS (FPR by Transaction Type) ===
+Transaction Type,False Positives,Total Legitimate,FPR,Status
+wire_transfer,50,4090,0.0122,WARN
+cryptocurrency,47,4178,0.0112,WARN
+mobile_payment,43,3938,0.0109,WARN
+atm_withdrawal,46,4234,0.0109,WARN
+ach,36,3909,0.0092,PASS
+credit_card,33,3973,0.0083,PASS
+check,34,4160,0.0082,PASS
+
