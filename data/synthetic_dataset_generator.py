@@ -546,171 +546,194 @@ class SyntheticDataGenerator:
 
         print(f"Generated {len(transactions_data)} transactions ({num_fraud} fraud, {num_legitimate} legitimate, actual inserted: {len(self.transaction_ids)}).")
 
-    def generate_decisions(self, coverage: float = 0.8):
+    def generate_decisions(self, coverage: float = 0.8, decisions_per_model: int = 10000):
         """
         Generate fraud detection decisions for transactions.
 
-        coverage: Percentage of transactions that have been scored by models
+        coverage: Percentage of transactions that have been scored by models (ignored if decisions_per_model is set)
+        decisions_per_model: Number of decisions to generate for each deployed model (default: 10000)
         """
         decisions_data = []
 
-        # Get deployed models
+        # Get deployed models with their performance metrics
         deployed_models = [mid for mid in self.model_ids[:3]]  # First 3 are deployed
         if not deployed_models:
             print("No deployed models found, skipping decision generation.")
             return
 
-        # Sample transactions for decision generation
-        num_decisions = int(len(self.transaction_ids) * coverage)
-        sampled_txn_ids = random.sample(self.transaction_ids, num_decisions)
-
-        print(f"Generating {num_decisions} fraud detection decisions...")
-
-        for txn_id in sampled_txn_ids:
-            decision_id = str(uuid.uuid4())
-            self.decision_ids.append(decision_id)
-
-            # Select model (weighted toward first model)
-            model_id = random.choices(deployed_models, weights=[0.6, 0.3, 0.1], k=1)[0]
-
-            # Get ground truth for this transaction
+        # Fetch model performance metrics (FPR and Recall) from database
+        model_metrics = {}
+        for model_id in deployed_models:
             self.cur.execute(
-                "SELECT is_fraud, fraud_type FROM transactions WHERE transaction_id = %s",
-                (txn_id,)
+                "SELECT name, fpr, recall_score FROM models WHERE model_id = %s",
+                (model_id,)
             )
             result = self.cur.fetchone()
-            actual_fraud = result[0] if result else None
+            if result:
+                model_name, fpr, recall = result
+                model_metrics[model_id] = {
+                    'name': model_name,
+                    'fpr': float(fpr),      # False Positive Rate
+                    'recall': float(recall)  # True Positive Rate (sensitivity)
+                }
+                print(f"  Model: {model_name} - Recall: {recall:.1%}, FPR: {fpr:.2%}")
 
-            # Model prediction (with realistic error rates)
-            if actual_fraud is True:
-                # True fraud: model catches it 85% of the time (recall ~0.85)
-                prediction_fraud = random.random() < 0.85
-                confidence = random.uniform(0.7, 0.95) if prediction_fraud else random.uniform(0.3, 0.6)
-            elif actual_fraud is False:
-                # Legitimate: model correctly identifies 99% (FPR ~1%)
-                prediction_fraud = random.random() < 0.01
-                confidence = random.uniform(0.1, 0.4) if prediction_fraud else random.uniform(0.05, 0.3)
-            else:
-                # Unknown ground truth: model prediction based on risk
-                prediction_fraud = random.random() < 0.1
-                confidence = random.uniform(0.4, 0.8)
+        # Generate exactly decisions_per_model decisions for each model
+        total_decisions = decisions_per_model * len(deployed_models)
+        print(f"Generating {decisions_per_model:,} decisions per model ({total_decisions:,} total) using model-specific performance...")
 
-            # Model features (for explainability)
-            model_features = {
-                'amount_zscore': round(random.gauss(0, 1), 2),
-                'velocity_24h': random.randint(1, 10),
-                'country_risk_score': round(random.uniform(0, 1), 2),
-                'time_since_last_txn_hours': random.randint(1, 720),
-                'merchant_category_risk': round(random.uniform(0, 1), 2)
-            }
+        # Process each model separately to ensure equal distribution
+        for model_id in deployed_models:
+            # Sample transactions for this model (with replacement to allow reuse)
+            sampled_txn_ids = random.choices(self.transaction_ids, k=decisions_per_model)
+            
+            # Get this model's performance metrics
+            metrics = model_metrics.get(model_id, {'fpr': 0.01, 'recall': 0.85})  # Fallback defaults
+            model_fpr = metrics['fpr']
+            model_recall = metrics['recall']
 
-            # Generate SHAP-like model explanation (feature importance)
-            # Simulates explainability output as per AFAAP Design Doc Section 3.1.1, 4.4.3
-            shap_values = {
-                'amount_zscore': round(random.uniform(-0.3, 0.3), 3),
-                'velocity_24h': round(random.uniform(-0.2, 0.4), 3),
-                'country_risk_score': round(random.uniform(-0.1, 0.3), 3),
-                'time_since_last_txn_hours': round(random.uniform(-0.15, 0.15), 3),
-                'merchant_category_risk': round(random.uniform(-0.2, 0.5), 3)
-            }
+            for txn_id in sampled_txn_ids:
+                decision_id = str(uuid.uuid4())
+                self.decision_ids.append(decision_id)
 
-            # Format as human-readable explanation
-            top_features = sorted(shap_values.items(), key=lambda x: abs(x[1]), reverse=True)[:3]
-            explanation_parts = []
-            for feature, value in top_features:
-                direction = "increases" if value > 0 else "decreases"
-                explanation_parts.append(f"{feature} {direction} fraud probability by {abs(value):.3f}")
+                # Get ground truth for this transaction
+                self.cur.execute(
+                    "SELECT is_fraud, fraud_type FROM transactions WHERE transaction_id = %s",
+                    (txn_id,)
+                )
+                result = self.cur.fetchone()
+                actual_fraud = result[0] if result else None
 
-            model_explanation = "Top factors: " + "; ".join(explanation_parts) + f". Base prediction: {confidence:.2f}"
+                # Model prediction using MODEL-SPECIFIC performance metrics
+                if actual_fraud is True:
+                    # True fraud: model catches it based on its RECALL rate
+                    prediction_fraud = random.random() < model_recall
+                    confidence = random.uniform(0.7, 0.95) if prediction_fraud else random.uniform(0.3, 0.6)
+                elif actual_fraud is False:
+                    # Legitimate: model flags it incorrectly based on its FPR
+                    prediction_fraud = random.random() < model_fpr
+                    confidence = random.uniform(0.1, 0.4) if prediction_fraud else random.uniform(0.05, 0.3)
+                else:
+                    # Unknown ground truth: model prediction based on risk
+                    prediction_fraud = random.random() < 0.1
+                    confidence = random.uniform(0.4, 0.8)
 
-            flag_timestamp = datetime.now() - timedelta(days=random.randint(0, 90))
+                    # Model features (for explainability)
+                model_features = {
+                    'amount_zscore': round(random.gauss(0, 1), 2),
+                    'velocity_24h': random.randint(1, 10),
+                    'country_risk_score': round(random.uniform(0, 1), 2),
+                    'time_since_last_txn_hours': random.randint(1, 720),
+                    'merchant_category_risk': round(random.uniform(0, 1), 2)
+                }
 
-            # Human review (compliance officer)
-            # Higher probability of review for high-confidence fraud predictions
-            needs_review = prediction_fraud and confidence > 0.6
+                # Generate SHAP-like model explanation (feature importance)
+                # Simulates explainability output as per AFAAP Design Doc Section 3.1.1, 4.4.3
+                shap_values = {
+                    'amount_zscore': round(random.uniform(-0.3, 0.3), 3),
+                    'velocity_24h': round(random.uniform(-0.2, 0.4), 3),
+                    'country_risk_score': round(random.uniform(-0.1, 0.3), 3),
+                    'time_since_last_txn_hours': round(random.uniform(-0.15, 0.15), 3),
+                    'merchant_category_risk': round(random.uniform(-0.2, 0.5), 3)
+                }
 
-            if needs_review and random.random() < 0.9:  # 90% review coverage for flagged
-                reviewed_by = random.choice([
-                    uid for key, uid in self.user_ids.items() if key.startswith('officer_')
+                # Format as human-readable explanation
+                top_features = sorted(shap_values.items(), key=lambda x: abs(x[1]), reverse=True)[:3]
+                explanation_parts = []
+                for feature, value in top_features:
+                    direction = "increases" if value > 0 else "decreases"
+                    explanation_parts.append(f"{feature} {direction} fraud probability by {abs(value):.3f}")
+
+                model_explanation = "Top factors: " + "; ".join(explanation_parts) + f". Base prediction: {confidence:.2f}"
+
+                flag_timestamp = datetime.now() - timedelta(days=random.randint(0, 90))
+
+                    # Human review (compliance officer)
+                # Higher probability of review for high-confidence fraud predictions
+                needs_review = prediction_fraud and confidence > 0.6
+
+                if needs_review and random.random() < 0.9:  # 90% review coverage for flagged
+                    reviewed_by = random.choice([
+                        uid for key, uid in self.user_ids.items() if key.startswith('officer_')
+                    ])
+
+                    # Officer decision
+                    if actual_fraud is True and prediction_fraud:
+                        # True positive: block
+                        officer_decision = random.choices(
+                            ['block_transaction', 'escalate'],
+                            weights=[0.8, 0.2],
+                            k=1
+                        )[0]
+                    elif actual_fraud is False and prediction_fraud:
+                        # False positive: approve or mark false positive
+                        officer_decision = random.choices(
+                            ['approve_transaction', 'false_positive', 'escalate'],
+                            weights=[0.6, 0.3, 0.1],
+                            k=1
+                        )[0]
+                    elif actual_fraud is True and not prediction_fraud:
+                        # False negative (caught in review): escalate
+                        officer_decision = 'escalate'
+                    else:
+                        # True negative: approve
+                        officer_decision = 'approve_transaction'
+
+                    officer_notes = self._generate_officer_notes(officer_decision, confidence, actual_fraud)
+                    decision_timestamp = flag_timestamp + timedelta(hours=random.randint(1, 120))  # 1h-5days
+
+                    final_decision = {
+                        'approve_transaction': 'approved',
+                        'block_transaction': 'blocked',
+                        'escalate': 'escalated',
+                        'false_positive': 'approved'
+                    }.get(officer_decision, 'pending')
+
+                    escalated_to = random.choice([
+                        uid for key, uid in self.user_ids.items() if key.startswith('auditor_')
+                    ]) if officer_decision == 'escalate' else None
+
+                else:
+                    reviewed_by = None
+                    officer_decision = None
+                    officer_notes = None
+                    decision_timestamp = None
+                    final_decision = 'pending'
+                    escalated_to = None
+
+                # Compute audit trail hash
+                hash_input = f"{model_id}|{txn_id}|{prediction_fraud}|{confidence}|{reviewed_by}|{officer_decision}"
+                audit_trail_hash = hashlib.sha256(hash_input.encode()).hexdigest()
+
+                # Audit trail complete if all review fields populated
+                audit_trail_complete = all([
+                    reviewed_by is not None,
+                    officer_decision is not None,
+                    decision_timestamp is not None,
+                    officer_notes is not None
                 ])
 
-                # Officer decision
-                if actual_fraud is True and prediction_fraud:
-                    # True positive: block
-                    officer_decision = random.choices(
-                        ['block_transaction', 'escalate'],
-                        weights=[0.8, 0.2],
-                        k=1
-                    )[0]
-                elif actual_fraud is False and prediction_fraud:
-                    # False positive: approve or mark false positive
-                    officer_decision = random.choices(
-                        ['approve_transaction', 'false_positive', 'escalate'],
-                        weights=[0.6, 0.3, 0.1],
-                        k=1
-                    )[0]
-                elif actual_fraud is True and not prediction_fraud:
-                    # False negative (caught in review): escalate
-                    officer_decision = 'escalate'
-                else:
-                    # True negative: approve
-                    officer_decision = 'approve_transaction'
-
-                officer_notes = self._generate_officer_notes(officer_decision, confidence, actual_fraud)
-                decision_timestamp = flag_timestamp + timedelta(hours=random.randint(1, 120))  # 1h-5days
-
-                final_decision = {
-                    'approve_transaction': 'approved',
-                    'block_transaction': 'blocked',
-                    'escalate': 'escalated',
-                    'false_positive': 'approved'
-                }.get(officer_decision, 'pending')
-
-                escalated_to = random.choice([
-                    uid for key, uid in self.user_ids.items() if key.startswith('auditor_')
-                ]) if officer_decision == 'escalate' else None
-
-            else:
-                reviewed_by = None
-                officer_decision = None
-                officer_notes = None
-                decision_timestamp = None
-                final_decision = 'pending'
-                escalated_to = None
-
-            # Compute audit trail hash
-            hash_input = f"{model_id}|{txn_id}|{prediction_fraud}|{confidence}|{reviewed_by}|{officer_decision}"
-            audit_trail_hash = hashlib.sha256(hash_input.encode()).hexdigest()
-
-            # Audit trail complete if all review fields populated
-            audit_trail_complete = all([
-                reviewed_by is not None,
-                officer_decision is not None,
-                decision_timestamp is not None,
-                officer_notes is not None
-            ])
-
-            decisions_data.append((
-                decision_id,
-                model_id,
-                txn_id,
-                prediction_fraud,
-                Decimal(str(round(confidence, 4))),
-                json.dumps(model_features),
-                flag_timestamp,
-                reviewed_by,
-                officer_decision,
-                officer_notes,
-                decision_timestamp,
-                final_decision,
-                escalated_to,
-                f"Escalation required for high-risk decision" if escalated_to else None,
-                audit_trail_hash,
-                audit_trail_complete,
-                model_explanation,  # New field for SHAP explainability
-                datetime.now(),
-                datetime.now()
-            ))
+                decisions_data.append((
+                    decision_id,
+                    model_id,
+                    txn_id,
+                    prediction_fraud,
+                    Decimal(str(round(confidence, 4))),
+                    json.dumps(model_features),
+                    flag_timestamp,
+                    reviewed_by,
+                    officer_decision,
+                    officer_notes,
+                    decision_timestamp,
+                    final_decision,
+                    escalated_to,
+                    f"Escalation required for high-risk decision" if escalated_to else None,
+                    audit_trail_hash,
+                    audit_trail_complete,
+                    model_explanation,  # New field for SHAP explainability
+                    datetime.now(),
+                    datetime.now()
+                ))
 
         # Insert decisions
         insert_query = """
