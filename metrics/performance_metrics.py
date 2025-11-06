@@ -508,3 +508,105 @@ def compare_metrics(
         'confidence_intervals_overlap': not (ci2_upper < ci1_lower or ci2_lower > ci1_upper),
         'significant_degradation': significant_degradation
     }
+
+
+# Main execution for direct running
+if __name__ == "__main__":
+    import psycopg2
+    import os
+    
+    # Connect to database
+    db_url = os.getenv('DATABASE_URL', 'postgresql://afaap_admin:afaap_password@localhost:5432/afaap')
+    # Parse connection string
+    if db_url.startswith('postgresql://'):
+        # Extract components
+        parts = db_url.replace('postgresql://', '').split('@')
+        user_pass = parts[0].split(':')
+        host_db = parts[1].split('/')
+        host_port = host_db[0].split(':')
+        
+        conn = psycopg2.connect(
+            host=host_port[0] if len(host_port) > 0 else 'localhost',
+            port=int(host_port[1]) if len(host_port) > 1 else 5432,
+            database=host_db[1] if len(host_db) > 1 else 'afaap',
+            user=user_pass[0] if len(user_pass) > 0 else 'afaap_admin',
+            password=user_pass[1] if len(user_pass) > 1 else 'afaap_password'
+        )
+    
+    cursor = conn.cursor()
+    
+    print("=" * 80)
+    print(" AFAAP PERFORMANCE METRICS CALCULATOR".center(80))
+    print("=" * 80)
+    
+    # Get decisions with ground truth
+    cursor.execute("""
+        SELECT 
+            d.prediction_fraud,
+            t.is_fraud as actual_fraud
+        FROM decisions d
+        JOIN transactions t ON d.transaction_id = t.transaction_id
+        WHERE t.is_fraud IS NOT NULL;
+    """)
+    
+    results = cursor.fetchall()
+    y_pred = [row[0] for row in results]
+    y_true = [row[1] for row in results]
+    
+    print(f"\nTotal Decisions Analyzed: {len(y_true):,}")
+    print("\nCalculating metrics with bootstrap confidence intervals...")
+    print("(This may take 10-20 seconds...)\n")
+    
+    # Convert to numpy arrays
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    
+    # Calculate all metrics
+    metrics = calculate_all_performance_metrics(y_true, y_pred)
+    
+    # Display results
+    print("=" * 80)
+    print(" PERFORMANCE METRICS RESULTS".center(80))
+    print("=" * 80)
+    
+    print(f"""
+F1 Score:           {metrics.f1_score:.4f} (95% CI: [{metrics.f1_ci_lower:.4f}, {metrics.f1_ci_upper:.4f}])
+  Target: ≥ 0.85    Status: {'✅ PASS' if metrics.f1_ci_lower >= 0.85 else '❌ FAIL'}
+
+False Positive Rate: {metrics.fpr:.4f} (95% CI: [{metrics.fpr_ci_lower:.4f}, {metrics.fpr_ci_upper:.4f}])
+  Target: ≤ 0.01    Status: {'✅ PASS' if metrics.fpr_ci_upper <= 0.01 else '❌ FAIL'}
+
+Precision:          {metrics.precision:.4f} (95% CI: [{metrics.precision_ci_lower:.4f}, {metrics.precision_ci_upper:.4f}])
+Recall:             {metrics.recall:.4f} (95% CI: [{metrics.recall_ci_lower:.4f}, {metrics.recall_ci_upper:.4f}])
+""")
+    
+    # Calculate confusion matrix
+    tp = sum(1 for yt, yp in zip(y_true, y_pred) if yt and yp)
+    fp = sum(1 for yt, yp in zip(y_true, y_pred) if not yt and yp)
+    fn = sum(1 for yt, yp in zip(y_true, y_pred) if yt and not yp)
+    tn = sum(1 for yt, yp in zip(y_true, y_pred) if not yt and not yp)
+    
+    print("=" * 80)
+    print(" CONFUSION MATRIX".center(80))
+    print("=" * 80)
+    print(f"""
+                     Predicted
+                FRAUD       NOT FRAUD
+         ┌─────────────┬─────────────┐
+  FRAUD  │  {tp:>6}     │  {fn:>6}     │
+  Actual ├─────────────┼─────────────┤
+  LEGIT  │  {fp:>6}     │  {tn:>6}     │
+         └─────────────┴─────────────┘
+
+True Positives (TP):  {tp:,} - Correctly caught fraud
+False Positives (FP): {fp:,} - Wrongly blocked legitimate transactions
+False Negatives (FN): {fn:,} - Missed fraud
+True Negatives (TN):  {tn:,} - Correctly allowed legitimate transactions
+""")
+    
+    print("=" * 80)
+    print(f" Metrics calculated from {len(y_true):,} decisions")
+    print("=" * 80)
+    
+    cursor.close()
+    conn.close()
