@@ -253,7 +253,7 @@ Then after, the validation metrics module will extract all these useful informat
 │ Input:  None (generates from scratch)                              │
 │ Process:                                                            │
 │   - Create 10,000 transactions (500 fraud, 9,500 legit)           │
-│   - Simulate 8,000 predictions (85% recall, 1% FPR)               │
+│   - Simulate 10,000 predictions (based on model threshold)              │
 │   - Generate officer reviews (approve/block/escalate)              │
 │   - Insert into PostgreSQL with audit trails                       │
 │ Output: Populated database with realistic governance data          │
@@ -273,10 +273,10 @@ Then after, the validation metrics module will extract all these useful informat
 │   - Compare against thresholds (F1≥0.85, FPR≤0.01)                │
 │   - Detect drift (6.2% degradation)                                │
 │   - Analyze fairness (84.6% FPR disparity)                         │
-│ Output: Statistical dashboard with pass/fail status                │
+│ Output: Statistical dashboard with pass/fail status, csv file, and finding.md file.               │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Performance Evaluation Results
 
-See [FINDINGS.md](docs/FINDINGS.md) for sample validation results and detailed analysis - consisting of a csv file, dahsboard and and findings.md file which showcases the results.
+See [FINDINGS.md](results/evaluation_20251106_174514) for sample validation results and detailed analysis - consisting of a csv file, dahsboard and and findings.md file which showcases the results.
