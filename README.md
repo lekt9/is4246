@@ -98,6 +98,8 @@ docker-compose up -d
 
 # 2. Apply migrations and generate data
 docker exec -i afaap-app psql postgresql://afaap_admin:afaap_password@postgres:5432/afaap < schema/001_initial_schema.sql
+docker exec -i afaap-app psql postgresql://afaap_admin:afaap_password@postgres:5432/afaap < schema/002_audit_trail_extensions.sql
+docker exec -i afaap-app psql postgresql://afaap_admin:afaap_password@postgres:5432/afaap < schema/003_indexes_and_constraints.sql
 docker exec afaap-app python data/synthetic_dataset_generator.py
 
 # 3. View results
