@@ -24,7 +24,7 @@ AFAAP provides a **complete governance framework** that:
 
 ## Overview
 
-AFAAP implements a comprehensive governance mechanism based on the **Three Lines of Defense (3LOD)** model:
+AFAAP implements a comprehensive governance mechanism based on the Three Lines of Defense (3LOD) model:
 
 **First Line (Development Team)**
 
@@ -46,11 +46,11 @@ AFAAP implements a comprehensive governance mechanism based on the **Three Lines
 
 ### Core Governance Metrics Requirements
 
-- **Pre-deployment validation** with F1 ≥ 0.85 and FPR ≤ 1% thresholds
-- **Continuous decision logging** with ≥98% audit trail completion
-- **Model re-validation protocols** for new use cases
-- **Human-in-the-loop workflows** for compliance officer review
-- **Immutable audit trails** for regulatory inspection
+- Pre-deployment validation with F1 ≥ 0.85 and FPR ≤ 1% thresholds
+- Continuous decision logging with ≥98% audit trail completion
+- Model re-validation protocols for new use cases
+- Human-in-the-loop workflows for compliance officer review
+- Immutable audit trails for regulatory inspection
 
 ## Key Features
 
@@ -80,19 +80,15 @@ AFAAP implements a comprehensive governance mechanism based on the **Three Lines
 
 ## Running this on own local machine
 
-## The fastest way to run this project is using **Docker** (avoids Python 3.13 compatibility issues):
-
 ## Installation
 
 ### Prerequisites
 
-- **Python 3.10-3.12** (⚠️ Python 3.13 not supported due to numpy compatibility)
+- **Python 3.10-3.12** (Python 3.13 not supported due to numpy compatibility)
 - **PostgreSQL 14+**
 - **Docker & Docker Compose** (recommended)
 
 ### Step-by-Step Setup
-
-See [setup.md](setup.md) for comprehensive instructions. Here's a summary:
 
 #### Option 1: Docker (Recommended)
 
@@ -152,7 +148,7 @@ docker exec afaap-app python metrics/performance_metrics.py
 
 ### Overview: Two-Stage Process
 
-The validation uses **two separate tools** that work in sequence:
+The validation uses two separate tools that work in sequence:
 
 ```
 Step 1: synthetic_dataset_generator.py → Creates test data and runs simualtion with 3 simulated AI fraud test models.
@@ -218,18 +214,15 @@ These transactions are to mimic real life transactions.
 
 This is the core simulation - how model predictions are generated:
 
-Model prediction simulation –
+Model prediction simulation:
 
 Select models and sample transactions – The function retrieves the first three deployed models and their performance metrics (recall and false positive rate) from the database. The transaction set of 10000 transactions is then prepared.
 
 Simulate model predictions – For each sampled transaction:
 
 For each transaction, the system checks whether it’s an actual fraud case (is_fraud = True).
-
 If it is fraud, the model correctly flags it x% of the time, where x is the recall rate (recall = x).
-
 If it is legitimate, the model only incorrectly flags it according to its false positive rate (e.g., 1%).
-
 A confidence score is randomly generated to represent how certain the model is in its prediction.
 
 Explainability generation – Each prediction includes a dictionary of key model features (e.g., transaction amount, velocity, country risk, merchant category). These act like SHAP values, showing which factors influenced the decision and how risky they were.
@@ -254,16 +247,19 @@ Then after, the validation metrics module will extract all these useful informat
 #### What Gets Analyzed:
 
 **1. Per-Model Performance Metrics**
+
 - F1 Score with 95% confidence intervals (bootstrap sampling)
 - False Positive Rate (FPR) with confidence intervals
 - Precision and Recall
 - Confusion Matrix (TP, FP, TN, FN)
 
 **2. Fairness Analysis**
+
 - FPR breakdown by transaction type
 - Identification of bias across different transaction categories
 
 **3. Output Files Generated**
+
 - `per_model_evaluation_dashboard.png` - Visual comparison of all models
 - `per_model_results.csv` - Detailed metrics data
 - `findings.md` - Comprehensive analysis with recommendations
